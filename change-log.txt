@@ -1,0 +1,34 @@
+HISTORY  - Date     Ver   By  Reason (most recent at the top please)
+           -------- ----- --- -------------------------------------------------
+           20120813 2.04  AJA Reduced training burst interval to conform with
+                              the TSOP4838 data sheet. Training burst reduced
+                              from 9000 to 1000 microseconds. Silence after
+                              training burst reduced from 4500 to 600 microseconds.
+                              Added extra pulse width checks.
+           20120312 2.03  AJA Repackaged the lot into a single zip file
+           20120310 2.02  AJA USB buffer overwrite problem seems to have been
+                              fixed in MikroC Pro v5.40 so I've removed the
+                              workaround of using a 2nd buffer. Fine tuned the
+                              USBdsc.c settings - use a slower polling rate and
+                              a few other minor changes.
+           20120308 2.01  AJA Allow local IRK! functions such as Backlight On
+                              to be programmed to a remote control button.
+           20120215 2.00  AJA Rewrite to support Consumer Devices usage page
+                              and other usage pages in the future
+           20101122 1.19  AJA Detect USB ready using HID_Write (not HID_Read)
+           20101120 1.18  AJA Added "Init USB" function
+           20101106 1.17  AJA Use LATC for outputs
+           20101023 1.16  AJA Don't try to send keystroke when USB is not ready
+           20101007 1.15  AJA Workaround USB send problem by using 2nd buffer
+           20100923 1.14  AJA Detect when power good from USB then init USB
+           20100911 1.13  AJA Recompiled with MikroC v3.8 (new USB interface)
+           20100828 1.12  AJA Added button debounce delay
+           20100810 1.11  AJA USB D+ and D- swapped (doc updated)
+           20100806 1.10  AJA LCD backlight polarity swapped (doc updated)
+           20100725 1.09  AJA Added LCD backlight control
+           20100619 1.08  AJA Added reset switch and power switch logic
+           20100616 1.07  AJA Use HS crystal instead of crystal oscillator
+           20100531 1.06  AJA Recognised broadcast address
+           20100522 1.04  AJA Added "set address" facility
+           20100519 1.03  AJA Added System Control (power) codes
+           20100501 1.00  AJA Initial version (using MikroC v3.2)
