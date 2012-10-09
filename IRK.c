@@ -308,6 +308,7 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121009 2.05  AJA Fixed the pulse width check introduced in 2.04.
            20120813 2.04  AJA Reduced training burst interval to conform with
                               the TSOP4838 data sheet. Training burst reduced
                               from 9000 to 1000 microseconds. Silence after
@@ -345,7 +346,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.04"
+#define IRK_VERSION "2.05"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -1248,7 +1249,7 @@ void Prolog()
 //----------------------------------------------------------------------------
 
   PWM1_Init(IR_MODULATION_FREQ);
-  PWM1_Set_Duty(DUTY_CYCLE);  // 64/256 = 1:4
+  PWM1_Set_Duty(DUTY_CYCLE);  // 64/256 = 1:4, 128/256 = 1:2
 
 //----------------------------------------------------------------------------
 // Set up LCD display
@@ -1303,7 +1304,7 @@ void interpretInfraredCommand(void)
 }
 
 #define IS_PULSE_WIDTH_NEAR(x) (nPulseWidth.n > (((x) - WIDTH_ERROR_MARGIN) * MICROSECONDS) \
-                              & nPulseWidth.n > (((x) + WIDTH_ERROR_MARGIN) * MICROSECONDS))
+                              & nPulseWidth.n < (((x) + WIDTH_ERROR_MARGIN) * MICROSECONDS))
                               
 void processInfraredInterrupt(void)
 {

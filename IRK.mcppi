@@ -25,10 +25,8 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=3
+Count=1
 File0=IRK.c
-File1=USBdsc.c
-File2=IRK.lst
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]

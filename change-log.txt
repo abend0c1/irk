@@ -1,5 +1,6 @@
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121009 2.05  AJA Fixed the pulse width check introduced in 2.04.
            20120813 2.04  AJA Reduced training burst interval to conform with
                               the TSOP4838 data sheet. Training burst reduced
                               from 9000 to 1000 microseconds. Silence after
