@@ -53,6 +53,24 @@ FEATURES -
            IRK! supports USB Consumer Device functions (e.g. Mute)
            IRK! has a programmable LCD backlight delay (or ON/OFF commands)
 
+PIN USAGE -                      PIC18F2550
+                            .------------------.
+            (Sense USB) --> | RE3  1    28 RB7 | <-- (DOWN button)
+            (LCD)       <-- | RA0  2    27 RB6 | <-- (UP button)
+            (LCD)       <-- | RA1  3    26 RB5 | <-- (OK button)
+            (LCD)       <-- | RA2  4    25 RB4 | <-- (SHIFT button)
+            (LCD)       <-- | RA3  5    24 RB3 | <-- (IR receiver)
+            (LCD)       <-- | RA4  6    23 RB2 | <-- (ALT button)
+            (LCD)       <-- | RA5  7    22 RB1 | <-- (CTL button)
+            (Ground)    --- | VSS  8    21 RB0 | <-- (TEACH button)
+            (XTAL)      --- | OSC1 9    20 VDD | --- (+5V)
+            (XTAL)      --- | OSC2 10   19 VSS | --- (Ground)
+            (LED)       <-- | RC0  11   18 RC7 | --> (RESET switch on PC)
+            (Backlight) <-- | RC1  12   17 RC6 | --> (POWER switch on PC)
+            (IR LED)    <-- | RC2  13   16 RC5 | <-> (USB D+)
+            (220nF)     --- | VUSB 14   15 RC4 | <-> (USB D-)
+                            '------------------'
+
 OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
 
             .----------------.
@@ -308,6 +326,11 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121010 2.07  AJA Added debug mode which displays debug information
+                              on the LCD.
+           20121009 2.06  AJA Increased IR transmit duty cycle from 1:4 to 1:2
+                              to increase the range for those who sit more than
+                              3m away from the IR receiver.
            20121009 2.05  AJA Fixed the pulse width check introduced in 2.04.
            20120813 2.04  AJA Reduced training burst interval to conform with
                               the TSOP4838 data sheet. Training burst reduced
@@ -346,7 +369,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.05"
+#define IRK_VERSION "2.07"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -370,7 +393,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 #define BROADCAST_ADDRESS       0xFF
 
 #define IR_MODULATION_FREQ  38000
-#define DUTY_CYCLE 256 / 4                      // 1 on to 4 off (saves power)
+#define DUTY_CYCLE 256 / 2                      // 1 on to 2 off
 
 // define some easy to remember types
 typedef unsigned short  byte;
@@ -447,7 +470,7 @@ volatile byte nRiseOrFall;  // CCP2CON at time of capture interrupt
 
 volatile byte                      cFlags;
 #define bInfraredInterruptPending  cFlags.B7
-// spare                           cFlags.B6
+#define bDebugMode                 cFlags.B6
 #define bSettingBacklightDelay     cFlags.B5
 #define bSettingUsage              cFlags.B4
 #define bLastUSBPower              cFlags.B3
@@ -460,6 +483,21 @@ byte nState;
 #define STATE_IR_TRAINING_RECEIVED       1
 #define STATE_IR_RECEIVING_BITS          2
 #define STATE_IR_COMMAND_RECEIVED        3
+
+volatile byte nEdgeCount;
+byte cDebugFlags;
+#define bDebugStatusPending        cDebugFlags.B0
+
+volatile struct
+{
+  byte nState;
+  byte nByte;
+  byte nBit;
+  byte nPulseWidthHi;
+  byte nPulseWidthLo;
+  byte nRiseOrFall;
+  byte nEdgeCount;
+} debug;
 
 byte nConfigDeviceAddress;
 byte nConfigBacklightDelay;
@@ -476,6 +514,8 @@ byte nTypomaticSlowCount;
 #define CMD_SET_BACKLIGHT_OFF         0x04
 #define CMD_SET_BACKLIGHT_ON          0x05
 #define CMD_SET_BACKLIGHT_DELAY       0x06
+#define CMD_SET_DEBUG_ON              0x07
+#define CMD_SET_DEBUG_OFF             0x08
 
 
 // Note that for a Vishay TSOP4838 IR receiver module, all IR bursts should
@@ -856,6 +896,8 @@ char * getDesc ()
         case CMD_SET_BACKLIGHT_OFF:   return "Light Off";   // Set delay = 0x00
         case CMD_SET_BACKLIGHT_ON:    return "Light On";    // Set delay = 0xFF
         case CMD_SET_BACKLIGHT_DELAY: return "Light Delay"; // Set delay = 0x01 to 0xFE (1 to 254 seconds)
+        case CMD_SET_DEBUG_OFF:       return "Debug Off";
+        case CMD_SET_DEBUG_ON:        return "Debug On";
         default: return "";
       }
     default: return "";
@@ -904,34 +946,37 @@ void updateLCD()
   c2x(usbCommand.s.ux.byte, sLCDLine1);
   sLCDLine1[2] = ' ';
   sLCDLine1[3] = 0;
-  switch (usbCommand.s.ux.byte & 0xF0)   // 0xUM (Usage 4 bits, Modifiers 4 bits)
+  if (!bDebugMode | bSettingUsage)
   {
-    case USAGE_KEYBOARD:
-      if (bSettingUsage)
-      {
-         strcat(sLCDLine1,"Keyboard");
-      }
-      else
-      {
-        // Display key modifiers code and description
-        if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,"CTL ");
-        if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,"ALT ");
-        if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,"SHIFT");
-        if (!sLCDLine1[3])                    strcat(sLCDLine1,"Keyboard");
-      }
-      break;
-    case USAGE_SYSTEM_CONTROL:
-      strcat(sLCDLine1,"System");
-      break;
-    case USAGE_CONSUMER_DEVICE:
-      strcat(sLCDLine1,"Consumer Dev");
-      break;
-    case USAGE_LOCAL_IRK_FUNCTION:
-      strcat(sLCDLine1,"IRK! Function");
-    default:
-      break;
+    switch (usbCommand.s.ux.byte & 0xF0)   // 0xUM (Usage 4 bits, Modifiers 4 bits)
+    {
+      case USAGE_KEYBOARD:
+        if (bSettingUsage)
+        {
+           strcat(sLCDLine1,"Keyboard");
+        }
+        else
+        {
+          // Display key modifiers code and description
+          if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,"CTL ");
+          if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,"ALT ");
+          if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,"SHIFT");
+          if (!sLCDLine1[3])                    strcat(sLCDLine1,"Keyboard");
+        }
+        break;
+      case USAGE_SYSTEM_CONTROL:
+        strcat(sLCDLine1,"System");
+        break;
+      case USAGE_CONSUMER_DEVICE:
+        strcat(sLCDLine1,"Consumer Dev");
+        break;
+      case USAGE_LOCAL_IRK_FUNCTION:
+        strcat(sLCDLine1,"IRK! Function");
+      default:
+        break;
+    }
   }
-  Lcd_Out(1,1,sLCDLine1);
+
   if (bSettingUsage)
   {
     strcpy(sLCDLine2,"^^ Select Usage");
@@ -962,6 +1007,55 @@ void updateLCD()
         strcat(sLCDLine2," secs");
     }
   }
+  else if (bDebugMode & bDebugStatusPending)
+  {
+/*
+    // Display debug information instead of the last key pressed
+    // Debug Line 1:
+    //        <---16 chars--->
+    //       +0000000000111111
+    //       +0123456789012345
+    // Line1: bbbbbbbbbbbb nn
+    //        bbbbbbbbbbbb      Last 6-byte IR command received
+    //                     nn   Number of edge transitions
+    byte i;
+    for (i = 0; i < 6; i++)
+    {
+      c2x(irCommand.b[i], &sLCDLine1[i*2]);
+    }
+    sLCDLine1[12] = ' ';
+    c2x(debug.nEdgeCount, &sLCDLine1[13]);
+    sLCDLine1[15] = 0;
+    // Debug Line 2:
+    //        <---16 chars--->
+    //       +0000000000111111
+    //       +0123456789012345
+    // Line2: yy ss n.n wwww r
+    //        yy                   Last valid USB usage code (xyy)
+    //           ss                Last IR processing state number (00=Reset)
+    //              n.n            Number of bytes.bits received (6.0 is normal)
+    //                  wwww       Last pulse width
+    //                       0     Last pulse was a falling edge
+    //                       1     Last pulse was a rising edge
+    c2x(usbCommand.s.yy, &sLCDLine2);
+    sLCDLine2[2] = ' ';
+    c2x(debug.nState, &sLCDLine2[3]);
+    c2x(debug.nByte, &sLCDLine2[5]);
+    sLCDLine2[5] = ' ';
+    c2x(debug.nBit,  &sLCDLine2[7]);
+    sLCDLine2[7] = '.';
+    sLCDLine2[9] = ' ';
+    c2x(debug.nPulseWidthHi, &sLCDLine2[10]);
+    c2x(debug.nPulseWidthLo, &sLCDLine2[12]);
+    sLCDLine2[14] = ' ';
+    if (debug.nRiseOrFall.B0)
+       sLCDLine2[15] = '1';
+    else
+       sLCDLine2[15] = '0';
+    sLCDLine2[16] = 0;
+*/
+    bDebugStatusPending = FALSE;
+  }
   else
   {
     // Display key code and description
@@ -970,6 +1064,7 @@ void updateLCD()
     sLCDLine2[3] = 0;
     strncat(sLCDLine2, getDesc(), 13);
   }
+  Lcd_Out(1,1,sLCDLine1);
   Lcd_Out(2,1,sLCDLine2);
 }
 
@@ -1080,9 +1175,14 @@ void performLocalIRKFunction()
       nConfigBackLightDelay = 0xFF;
       actionBacklightDelay();
       break;
-    case CMD_SET_DEVICE_ADDRESS:
-       ; // Do nothing, user is setting the IRK! device address
+    case CMD_SET_DEBUG_OFF:
+      bDebugMode = OFF;
       break;
+    case CMD_SET_DEBUG_ON:
+      bDebugMode = ON;
+      break;
+    case CMD_SET_DEVICE_ADDRESS:
+      break;    // Do nothing, user is setting the IRK! device address
     default:
       break;
   }
@@ -1113,6 +1213,23 @@ void sendUSBCommand()
 
 void gotoResetState()
 {
+  int i;
+  if (bDebugMode)
+  {
+    if (!bDebugStatusPending)
+    {
+       debug.nState = nState;
+       debug.nByte = nByte;
+       debug.nBit = nBit;
+       debug.nPulseWidthHi = nPulseWidth.byte[1];
+       debug.nPulseWidthLo = nPulseWidth.byte[0];
+       debug.nRiseOrFall = nRiseOrFall;
+       debug.nEdgeCount = nEdgeCount;
+       bDebugStatusPending = TRUE;
+    }
+    nEdgeCount = 0;
+  }
+  for (i=0; i < sizeof irCommand.b; i++) irCommand.b[i] = 0;
   nState = STATE_IR_RESET;
   nByte = 0;
   nBit = 0;
@@ -1185,6 +1302,7 @@ void Prolog()
   byte i;
 
   cFlags = 0;             // Reset all flags
+  cDebugFlags = 0;        // Reset debug flags
   for (i=0; i < sizeof irCommand.b; i++) irCommand.b[i] = 0;
   usbCommand.uxyy = 0;
 
@@ -1274,22 +1392,6 @@ void Prolog()
   enableInfraredCapture();
 }
 
-void appendBit(void)
-{
-  nBit++;
-  if (nBit > 7)
-  {
-    nBit = 0;
-    irCommand.b[nByte] = cByte;
-    nByte++;
-    if (nByte >= sizeof irCommand.b)
-    {
-      nByte = 0;
-      nState = STATE_IR_COMMAND_RECEIVED;
-    }
-  }
-}
-
 void interpretInfraredCommand(void)
 {
   if ((irCommand.s.nAddress   != nConfigDeviceAddress) &&                 // Address byte matches this device..
@@ -1301,6 +1403,21 @@ void interpretInfraredCommand(void)
   usbCommand.uxyy = irCommand.s.nModifiers << 8 | irCommand.s.nCommand;   // Build USB command from incoming IR command
   updateLCD();              // Display it on the LCD display
   sendUSBCommand();         // Send it via USB to the host
+}
+
+void appendBit(void)
+{
+  nBit++;
+  if (nBit > 7)
+  {
+    nBit = 0;
+    irCommand.b[nByte] = cByte;
+    nByte++;
+    if (nByte >= sizeof irCommand.b)
+    {
+      nState = STATE_IR_COMMAND_RECEIVED;
+    }
+  }
 }
 
 #define IS_PULSE_WIDTH_NEAR(x) (nPulseWidth.n > (((x) - WIDTH_ERROR_MARGIN) * MICROSECONDS) \
@@ -1370,6 +1487,7 @@ void interrupt()            // High priority interrupt service routine
     CCP2CON ^= 0b00000001;  // Toggle rise or fall detection
     TMR1H = 0;              // Set high-byte of 16-bit time
     TMR1L = 0;              // Set low-byte and write all 16 bits to Timer1
+    nEdgeCount++;           // Count number of edge transitions for debugging
     PIR2.CCP2IF = 0;        // Allow the next CCP2 interrupt to occur
     bInfraredInterruptPending = 1; // Indicate capture event detected
   }
@@ -1435,6 +1553,12 @@ void handleOKButton(void)
       case CMD_SET_BACKLIGHT_ON:    // User wants backlight always ON
         nConfigBackLightDelay = 0xFF;
         saveBacklightDelay();
+        break;
+      case CMD_SET_DEBUG_OFF:
+        bDebugMode = OFF;
+        break;
+      case CMD_SET_DEBUG_ON:
+        bDebugMode = ON;
         break;
       default:
         sendUSBCommand();
@@ -1568,15 +1692,6 @@ void main()
 
   while (FOREVER)
   {
-    if (bLastUSBPower ^ USB_POWER_GOOD) // If USB power state has changed
-    {
-      if (USB_POWER_GOOD)               // If USB is now powered
-        enableUSB();                    // Then enable USB interface
-      else                              // Else USB is now unpowered
-        disableUSB();                   // So disable USB interface
-      bLastUSBPower = USB_POWER_GOOD;   // Remember the current USB power state
-    }
-
     if (bInfraredInterruptPending)
     {
       processInfraredInterrupt();
@@ -1619,6 +1734,18 @@ void main()
       T3CON.TMR3ON = OFF;         // Turn off the "type-o-matic" repeat timer
       bTypomaticPending = FALSE;
       updateLCD();         // Show final key state
+    }
+    if (bDebugStatusPending)
+    {
+      updateLCD();
+    }
+    if (bLastUSBPower ^ USB_POWER_GOOD) // If USB power state has changed
+    {
+      if (USB_POWER_GOOD)               // If USB is now powered
+        enableUSB();                    // Then enable USB interface
+      else                              // Else USB is now unpowered
+        disableUSB();                   // So disable USB interface
+      bLastUSBPower = USB_POWER_GOOD;   // Remember the current USB power state
     }
   }
 }
