@@ -340,6 +340,8 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
                               microseconds (that to half the smallest pulse
                               width). This has fixed the sensitivity problem.
                               Also added a debug on/off local IRK function.
+                              Now displays graphic symbols for up/down/left/
+                              right/pause and backslash on the LCD.
            20121009 2.05  AJA Fixed the pulse width check introduced in 2.04.
            20120813 2.04  AJA Reduced training burst interval to conform with
                               the TSOP4838 data sheet. Training burst reduced
