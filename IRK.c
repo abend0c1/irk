@@ -160,9 +160,19 @@ OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
                     00 Set Address
                     You then press up/down to cycle the address (aa) then
                     press OK to select it. The default address is AA.
-            F0 01   Init USB
+            F0 01   Power Switch
             F0 02   Reset Switch
-            F0 03   Power Switch
+            F0 03   Init USB
+            F0 04   Back light off
+            F0 05   Back light on
+            F0 06   Set light delay  ... the next LCD display will be:
+                    xx <-- nnn secs (where nnn is xx in decimal)
+                    FF <-- ON       (keep back light always on)
+                    00 <-- OFF      (keep back light always off)
+                    You then press up/down to cycle the delay (xx) then
+                    press OK to select it.
+            F0 07   Debug on (displays debug info when an IR code is received)
+            F0 08   Debug off (displays no debug info)
 
 
 
@@ -326,11 +336,10 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
-           20121010 2.07  AJA Added debug mode which displays debug information
-                              on the LCD.
-           20121009 2.06  AJA Increased IR transmit duty cycle from 1:4 to 1:2
-                              to increase the range for those who sit more than
-                              3m away from the IR receiver.
+           20121020 2.06  AJA Increased the WIDTH_ERROR_MARGIN from 100 to 300
+                              microseconds (that to half the smallest pulse
+                              width). This has fixed the sensitivity problem.
+                              Also added a debug on/off local IRK function.
            20121009 2.05  AJA Fixed the pulse width check introduced in 2.04.
            20120813 2.04  AJA Reduced training burst interval to conform with
                               the TSOP4838 data sheet. Training burst reduced
@@ -369,7 +378,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.07"
+#define IRK_VERSION "2.06"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -484,20 +493,11 @@ byte nState;
 #define STATE_IR_RECEIVING_BITS          2
 #define STATE_IR_COMMAND_RECEIVED        3
 
-volatile byte nEdgeCount;
-byte cDebugFlags;
-#define bDebugStatusPending        cDebugFlags.B0
-
-volatile struct
+union 
 {
-  byte nState;
-  byte nByte;
-  byte nBit;
-  byte nPulseWidthHi;
-  byte nPulseWidthLo;
-  byte nRiseOrFall;
-  byte nEdgeCount;
-} debug;
+  int n;
+  byte b[2];
+} resetCount;
 
 byte nConfigDeviceAddress;
 byte nConfigBacklightDelay;
@@ -525,7 +525,7 @@ byte nTypomaticSlowCount;
 
 // The following delays are in microseconds and are used as-is when
 // transmitting an IR signal...
-#define WIDTH_ERROR_MARGIN             100
+#define WIDTH_ERROR_MARGIN             300
 #define WIDTH_SHORT                    600
 #define WIDTH_LONG                    1650
 #define WIDTH_TRAINING_PULSE          1000
@@ -671,7 +671,7 @@ char * getKeyWithNoShift ()
     case 0x2E: return "=";             //  46  2E  = +
     case 0x2F: return "[";             //  47  2F  [ {
     case 0x30: return "]";             //  48  30  ] }
-    case 0x31: return "\xA4";          //  49  31  \ |
+    case 0x31: return "\7";            //  49  31  \ |   (character generator)
                                        //  50  32  Non-US # Non-US ~
     case 0x33: return ";";             //  51  33  ; :
     case 0x34: return "\'";            //  52  34  ‘ "
@@ -679,7 +679,7 @@ char * getKeyWithNoShift ()
     case 0x36: return ",";             //  54  36  , <
     case 0x37: return ".";             //  55  37  . >
     case 0x38: return "/";             //  56  38  / ?
-    case 0x39: return "Caps Lock";     //  57  39  N
+    case 0x39: return "CapLck";        //  57  39  Caps lock
     case 0x3A: return "F1";            //  58  3A  F1
     case 0x3B: return "F2";            //  59  3B  F2
     case 0x3C: return "F3";            //  60  3C  F3
@@ -692,20 +692,20 @@ char * getKeyWithNoShift ()
     case 0x43: return "F10";           //  67  43  F10
     case 0x44: return "F11";           //  68  44  F11
     case 0x45: return "F12";           //  69  45  F12
-    case 0x46: return "Print Screen";  //  70  46  Print Screen
-    case 0x47: return "Scroll Lock";   //  71  47  Scroll Lock
-    case 0x48: return "Pause";         //  72  48  Pause
-    case 0x49: return "Insert";        //  73  49  Insert
+    case 0x46: return "PrtScr";        //  70  46  Print Screen
+    case 0x47: return "ScrLck";        //  71  47  Scroll Lock
+    case 0x48: return "\6";            //  72  48  Pause (character generator)
+    case 0x49: return "Ins";           //  73  49  Insert
     case 0x4A: return "Home";          //  74  4A  Home
-    case 0x4B: return "Page Up";       //  75  4B  Page Up
-    case 0x4C: return "Delete";        //  76  4C  Delete
+    case 0x4B: return "PgUp";          //  75  4B  Page Up
+    case 0x4C: return "Del";           //  76  4C  Delete
     case 0x4D: return "End";           //  77  4D  End
-    case 0x4E: return "Page Down";     //  78  4E  Page Down
-    case 0x4F: return "Right";         //  79  4F  Right
-    case 0x50: return "Left";          //  80  50  Left
-    case 0x51: return "Down";          //  81  51  Down
-    case 0x52: return "Up";            //  82  52  Up
-    case 0x53: return "Num Lock";      //  83  53  Keypad Num Lock Clear
+    case 0x4E: return "PgDn";          //  78  4E  Page Down
+    case 0x4F: return "\3";            //  79  4F  Right (character generator)
+    case 0x50: return "\4";            //  80  50  Left  (character generator)
+    case 0x51: return "\2";            //  81  51  Down  (character generator)
+    case 0x52: return "\1";            //  82  52  Up    (character generator)
+    case 0x53: return "NumLck";        //  83  53  Keypad Num Lock Clear
 /*
     case 0x54: return "Keypad /";      //  84  54  Keypad /
     case 0x55: return "Keypad *";      //  85  55  Keypad *
@@ -793,7 +793,7 @@ char * getKeyWithShift()
                                        //  50  32  Non-US # Non-US ~
     case 0x33: return ":";             //  51  33  ; :
     case 0x34: return "\"";            //  52  34  ‘ "
-    case 0x35: return "Tilde";         //  53  35  ` ~ (HD 44780 LCD cannot display ~)
+    case 0x35: return "\5";            //  53  35  ` ~  (character generator)
     case 0x36: return "<";             //  54  36  , <
     case 0x37: return ">";             //  55  37  . >
     case 0x38: return "?";             //  56  38  / ?
@@ -859,7 +859,7 @@ char * getDesc ()
         case 0x20B5: return ">>|";
         case 0x20B6: return "|<<";
         case 0x20B7: return "Stop";
-        case 0x20CD: return ">/||";
+        case 0x20CD: return ">/\6";
         case 0x20E2: return "Mute";
         case 0x20E9: return "Vol+";
         case 0x20EA: return "Vol-";
@@ -912,21 +912,6 @@ void c2x (byte c, char * p)
   *p     = HEX[(c & 0x0F)     ];
 }
 
-/*
-void showInfraredCommand()
-{
-  c2x(irCommand.s.nAddress,           &sLCDLine1[0]);
-  c2x(irCommand.s.nAddressInverted,   &sLCDLine1[2]);
-  c2x(irCommand.s.nModifiers,         &sLCDLine1[4]);
-  c2x(irCommand.s.nModifiersInverted, &sLCDLine1[6]);
-  c2x(irCommand.s.nCommand,           &sLCDLine1[8]);
-  c2x(irCommand.s.nCommandInverted,   &sLCDLine1[10]);
-  sLCDLine1[12] = 0;
-  Lcd_Cmd(_LCD_CLEAR);                // Clear display
-  Lcd_Out(2,1,sLCDLine1);
-}
-*/
-
 void enableBacklight()
 {
   if (nConfigBacklightDelay == 0x00) return;
@@ -940,41 +925,89 @@ void enableBacklight()
   T0CON.TMR0ON = 1;            // Turn on Timer0
 }
 
+void showDebugInfo()
+{
+  byte i;
+  // Display debug information instead of the last key pressed
+  // Debug Line 1:
+  //        <---16 chars--->
+  //       +0000000000111111
+  //       +0123456789012345
+  // Line1: bbbbbbbbbbbb
+  //        bbbbbbbbbbbb      Last 6-byte IR command received
+  //                    nnnn   Number of resets before a good command was received
+  for (i = 0; i < 6; i++)
+  {
+    c2x(irCommand.b[i], &sLCDLine1[i*2]);
+  }
+  c2x(resetCount.b[1], &sLCDLine1[12]);
+  c2x(resetCount.b[0], &sLCDLine1[14]);
+  sLCDLine1[16] = 0;
+  // Debug Line 2:
+  //        <---16 chars--->
+  //       +0000000000111111
+  //       +0123456789012345
+  // Line2: yy ss n.n wwww r
+  //        yy                   Last valid USB usage code (xyy)
+  //           ss                Last IR processing state number (00=Reset)
+  //              n.n            Number of bytes.bits received (6.0 is normal)
+  //                  wwww       Last pulse width
+  //                       0     Last pulse was a falling edge
+  //                       1     Last pulse was a rising edge
+  c2x(usbCommand.s.yy, &sLCDLine2);
+  sLCDLine2[2] = ' ';
+  c2x(nState, &sLCDLine2[3]);
+  c2x(nByte, &sLCDLine2[5]);
+  sLCDLine2[5] = ' ';
+  c2x(nBit,  &sLCDLine2[7]);
+  sLCDLine2[7] = '.';
+  sLCDLine2[9] = ' ';
+  c2x(nPulseWidth.byte[1], &sLCDLine2[10]);
+  c2x(nPulseWidth.byte[0], &sLCDLine2[12]);
+  sLCDLine2[14] = ' ';
+  if (bRisingEdge)
+     sLCDLine2[15] = 'u';
+  else
+     sLCDLine2[15] = 'd';
+  sLCDLine2[16] = 0;
+  resetCount.n = 0;
+  Lcd_Cmd(_LCD_CLEAR);                // Clear display
+  Lcd_Out(1,1,&sLCDLine1);
+  Lcd_Out(2,1,&sLCDLine2);
+}
+
 void updateLCD()
 {
   Lcd_Cmd(_LCD_CLEAR);                // Clear display
   c2x(usbCommand.s.ux.byte, sLCDLine1);
   sLCDLine1[2] = ' ';
   sLCDLine1[3] = 0;
-  if (!bDebugMode | bSettingUsage)
+  switch (usbCommand.s.ux.byte & 0xF0)   // 0xUM (Usage 4 bits, Modifiers 4 bits)
   {
-    switch (usbCommand.s.ux.byte & 0xF0)   // 0xUM (Usage 4 bits, Modifiers 4 bits)
-    {
-      case USAGE_KEYBOARD:
-        if (bSettingUsage)
-        {
-           strcat(sLCDLine1,"Keyboard");
-        }
-        else
-        {
-          // Display key modifiers code and description
-          if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,"CTL ");
-          if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,"ALT ");
-          if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,"SHIFT");
-          if (!sLCDLine1[3])                    strcat(sLCDLine1,"Keyboard");
-        }
-        break;
-      case USAGE_SYSTEM_CONTROL:
-        strcat(sLCDLine1,"System");
-        break;
-      case USAGE_CONSUMER_DEVICE:
-        strcat(sLCDLine1,"Consumer Dev");
-        break;
-      case USAGE_LOCAL_IRK_FUNCTION:
-        strcat(sLCDLine1,"IRK! Function");
-      default:
-        break;
-    }
+    case USAGE_KEYBOARD:
+      if (bSettingUsage)
+      {
+         strcat(sLCDLine1,"Keyboard");
+      }
+      else
+      {
+        // Display key modifiers code and description
+        if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,"CTL ");
+        if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,"ALT ");
+        if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,"SHIFT");
+        if (!sLCDLine1[3])                    strcat(sLCDLine1,"Keyboard");
+      }
+      break;
+    case USAGE_SYSTEM_CONTROL:
+      strcat(sLCDLine1,"System");
+      break;
+    case USAGE_CONSUMER_DEVICE:
+      strcat(sLCDLine1,"Consumer Dev");
+      break;
+    case USAGE_LOCAL_IRK_FUNCTION:
+      strcat(sLCDLine1,"IRK! Function");
+    default:
+      break;
   }
 
   if (bSettingUsage)
@@ -1006,55 +1039,6 @@ void updateLCD()
         ByteToStr(nNewBacklightDelay, sLCDLine2+6);
         strcat(sLCDLine2," secs");
     }
-  }
-  else if (bDebugMode & bDebugStatusPending)
-  {
-/*
-    // Display debug information instead of the last key pressed
-    // Debug Line 1:
-    //        <---16 chars--->
-    //       +0000000000111111
-    //       +0123456789012345
-    // Line1: bbbbbbbbbbbb nn
-    //        bbbbbbbbbbbb      Last 6-byte IR command received
-    //                     nn   Number of edge transitions
-    byte i;
-    for (i = 0; i < 6; i++)
-    {
-      c2x(irCommand.b[i], &sLCDLine1[i*2]);
-    }
-    sLCDLine1[12] = ' ';
-    c2x(debug.nEdgeCount, &sLCDLine1[13]);
-    sLCDLine1[15] = 0;
-    // Debug Line 2:
-    //        <---16 chars--->
-    //       +0000000000111111
-    //       +0123456789012345
-    // Line2: yy ss n.n wwww r
-    //        yy                   Last valid USB usage code (xyy)
-    //           ss                Last IR processing state number (00=Reset)
-    //              n.n            Number of bytes.bits received (6.0 is normal)
-    //                  wwww       Last pulse width
-    //                       0     Last pulse was a falling edge
-    //                       1     Last pulse was a rising edge
-    c2x(usbCommand.s.yy, &sLCDLine2);
-    sLCDLine2[2] = ' ';
-    c2x(debug.nState, &sLCDLine2[3]);
-    c2x(debug.nByte, &sLCDLine2[5]);
-    sLCDLine2[5] = ' ';
-    c2x(debug.nBit,  &sLCDLine2[7]);
-    sLCDLine2[7] = '.';
-    sLCDLine2[9] = ' ';
-    c2x(debug.nPulseWidthHi, &sLCDLine2[10]);
-    c2x(debug.nPulseWidthLo, &sLCDLine2[12]);
-    sLCDLine2[14] = ' ';
-    if (debug.nRiseOrFall.B0)
-       sLCDLine2[15] = '1';
-    else
-       sLCDLine2[15] = '0';
-    sLCDLine2[16] = 0;
-*/
-    bDebugStatusPending = FALSE;
   }
   else
   {
@@ -1135,7 +1119,7 @@ void sendUSBSystemControlCommand()
   }
 }
 
-void SendUSBConsumerDeviceCommand()
+void sendUSBConsumerDeviceCommand()
 {
   if (bUSBReady)
   {
@@ -1177,6 +1161,7 @@ void performLocalIRKFunction()
       break;
     case CMD_SET_DEBUG_OFF:
       bDebugMode = OFF;
+      updateLCD();
       break;
     case CMD_SET_DEBUG_ON:
       bDebugMode = ON;
@@ -1188,7 +1173,7 @@ void performLocalIRKFunction()
   }
 }
 
-void sendUSBCommand()
+void executeCommand()
 {
   nActivityLEDDelay = 10000;  // Number of main loop iterations to keep the activity LED glowing
   ACTIVITY_LED = ON;
@@ -1213,26 +1198,10 @@ void sendUSBCommand()
 
 void gotoResetState()
 {
-  int i;
-  if (bDebugMode)
-  {
-    if (!bDebugStatusPending)
-    {
-       debug.nState = nState;
-       debug.nByte = nByte;
-       debug.nBit = nBit;
-       debug.nPulseWidthHi = nPulseWidth.byte[1];
-       debug.nPulseWidthLo = nPulseWidth.byte[0];
-       debug.nRiseOrFall = nRiseOrFall;
-       debug.nEdgeCount = nEdgeCount;
-       bDebugStatusPending = TRUE;
-    }
-    nEdgeCount = 0;
-  }
-  for (i=0; i < sizeof irCommand.b; i++) irCommand.b[i] = 0;
   nState = STATE_IR_RESET;
   nByte = 0;
   nBit = 0;
+  resetCount.n++;
 }
 
 void disableInfraredCapture()
@@ -1297,12 +1266,80 @@ void transmitInfraredCommand()
   ACTIVITY_LED = OFF;
 }
 
+void defineCustomCharacters()
+{
+  Lcd_Cmd(72);
+  // 01 = Up Arrow
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(10);
+  Lcd_Chr_CP(21);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  // 02 = Down Arrow
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(21);
+  Lcd_Chr_CP(10);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  // 03 = Right Arrow
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(2);
+  Lcd_Chr_CP(29);
+  Lcd_Chr_CP(2);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  // 04 = Left Arrow
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(8);
+  Lcd_Chr_CP(23);
+  Lcd_Chr_CP(8);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  // 05 = Tilde
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(9);
+  Lcd_Chr_CP(21);
+  Lcd_Chr_CP(18);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  // 06 = Pause
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(27);
+  Lcd_Chr_CP(0);
+  // 07 = Back slash
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(16);
+  Lcd_Chr_CP(8);
+  Lcd_Chr_CP(4);
+  Lcd_Chr_CP(2);
+  Lcd_Chr_CP(1);
+  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0);
+  Lcd_Cmd(_LCD_RETURN_HOME);
+}
+
 void Prolog()
 {
   byte i;
 
   cFlags = 0;             // Reset all flags
-  cDebugFlags = 0;        // Reset debug flags
   for (i=0; i < sizeof irCommand.b; i++) irCommand.b[i] = 0;
   usbCommand.uxyy = 0;
 
@@ -1374,6 +1411,7 @@ void Prolog()
 //----------------------------------------------------------------------------
 
   Lcd_Init();                         // Initialize LCD
+  defineCustomCharacters();
   Lcd_Cmd(_LCD_CLEAR);                // Clear display
   Lcd_Cmd(_LCD_CURSOR_OFF);           // Cursor off
   Lcd_Out(1,1,"IRK! v" IRK_VERSION);
@@ -1401,8 +1439,11 @@ void interpretInfraredCommand(void)
   if (!(irCommand.s.nCommand   ^ irCommand.s.nCommandInverted))   return; // Key byte valid?
                             // The infrared command is now valid, so...
   usbCommand.uxyy = irCommand.s.nModifiers << 8 | irCommand.s.nCommand;   // Build USB command from incoming IR command
-  updateLCD();              // Display it on the LCD display
-  sendUSBCommand();         // Send it via USB to the host
+  if (bDebugMode)
+    showDebugInfo();
+  else
+    updateLCD();              // Display it on the LCD display
+  executeCommand();         // Send it via USB to the host
 }
 
 void appendBit(void)
@@ -1487,17 +1528,16 @@ void interrupt()            // High priority interrupt service routine
     CCP2CON ^= 0b00000001;  // Toggle rise or fall detection
     TMR1H = 0;              // Set high-byte of 16-bit time
     TMR1L = 0;              // Set low-byte and write all 16 bits to Timer1
-    nEdgeCount++;           // Count number of edge transitions for debugging
-    PIR2.CCP2IF = 0;        // Allow the next CCP2 interrupt to occur
     bInfraredInterruptPending = 1; // Indicate capture event detected
+    PIR2.CCP2IF = 0;        // Allow the next CCP2 interrupt to occur
   }
-  if (PIR2.TMR3IF)          // If it's a Timer3 interrupt
+  else if (PIR2.TMR3IF)          // If it's a Timer3 interrupt
   {
     bTypomaticPending = TRUE;  // Indicate Timer3 rollover (3.81 times/second)
     nTypomaticDelay--;      // Decrement delay before typomatic action starts
     PIR2.TMR3IF = 0;        // Clear the Timer3 interrupt flag
   }
-  if (INTCON.TMR0IF)        // If backlight timeout interrupt
+  else if (INTCON.TMR0IF)        // If backlight timeout interrupt
   {
     nBacklightDelay--;      // Decrement seconds remaining with backlight on
     if (nBackLightDelay == 0)
@@ -1554,25 +1594,19 @@ void handleOKButton(void)
         nConfigBackLightDelay = 0xFF;
         saveBacklightDelay();
         break;
-      case CMD_SET_DEBUG_OFF:
-        bDebugMode = OFF;
-        break;
-      case CMD_SET_DEBUG_ON:
-        bDebugMode = ON;
-        break;
       default:
-        sendUSBCommand();
+        executeCommand();
         break;
     }
   }
   else                              // Send the USB function to the host
   {
-    sendUSBCommand();
+    executeCommand();
     while (OK_BUTTON_PRESSED)
     { // Note: typomatic repeat is normally a USB host function but IRK! is different
       if (bTypomaticPending && nTypomaticDelay <= 0)
       {
-        sendUSBCommand();
+        executeCommand();
         bTypomaticPending = FALSE;
         nTypomaticDelay = 0;
       }
@@ -1734,10 +1768,6 @@ void main()
       T3CON.TMR3ON = OFF;         // Turn off the "type-o-matic" repeat timer
       bTypomaticPending = FALSE;
       updateLCD();         // Show final key state
-    }
-    if (bDebugStatusPending)
-    {
-      updateLCD();
     }
     if (bLastUSBPower ^ USB_POWER_GOOD) // If USB power state has changed
     {
