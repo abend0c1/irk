@@ -336,6 +336,8 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121025 2.07  AJA Added extra Consumer Device function descriptions.
+                              These are optional, but make IRK easier to use.
            20121020 2.06  AJA Increased the WIDTH_ERROR_MARGIN from 100 to 300
                               microseconds (that to half the smallest pulse
                               width). This has fixed the sensitivity problem.
@@ -380,7 +382,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.06"
+#define IRK_VERSION "2.07"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -817,6 +819,13 @@ char * getKeyWithShift()
   }
 }
 
+char * menu (char * pAction)  // This is just a RAM-saving hack
+{
+  char txt[] = "Menu      ";
+  txt[5] = 0;
+  return strcat(txt, pAction);
+}
+
 char * getDesc ()
 {
 // This is implemented as a function instead of a table lookup
@@ -858,22 +867,36 @@ char * getDesc ()
     case USAGE_CONSUMER_DEVICE:
       switch (nFunction)
       {
-        case 0x20B5: return ">>|";
-        case 0x20B6: return "|<<";
-        case 0x20B7: return "Stop";
-        case 0x20CD: return ">/\6";
-        case 0x20E2: return "Mute";
-        case 0x20E9: return "Vol+";
-        case 0x20EA: return "Vol-";
-        case 0x2183: return "Media Player";
-        case 0x218A: return "Email";
-        case 0x2192: return "Calculator";
-        case 0x2221: return "Search";
-        case 0x2223: return "Home";
-        case 0x2224: return "Prev";
-        case 0x2225: return "Next";
-        case 0x2226: return "Stop";
-        case 0x2227: return "Refresh";
+        case 0x2040: return menu("");         // Menu
+        case 0x2041: return menu("OK");       // Menu Pick
+        case 0x2042: return menu("\1");       // Menu Up
+        case 0x2043: return menu("\2");       // Menu Down
+        case 0x2044: return menu("\4");       // Menu Left
+        case 0x2045: return menu("\3");       // Menu Right
+        case 0x2046: return menu("Exit");     // Menu Escape
+        case 0x209C: return "Ch+";            // Channel Up
+        case 0x209D: return "Ch-";            // Channel Down
+        case 0x20B0: return ">";              // Play
+        case 0x20B1: return "\6";             // Pause
+        case 0x20B2: return "Rec";            // Record
+        case 0x20B3: return ">>";             // Fast Forward
+        case 0x20B4: return "<<";             // Rewind
+        case 0x20B5: return ">>|";            // Next Track
+        case 0x20B6: return "|<<";            // Previous Track
+        case 0x20B7: return "Stop";           // Stop
+        case 0x20CD: return ">/\6";           // Play / Pause
+        case 0x20E2: return "Mute";           // Mute
+        case 0x20E9: return "Vol+";           // Volume Up
+        case 0x20EA: return "Vol-";           // Volume Down
+        case 0x2183: return "Media Player";   // Application: Media Player
+        case 0x218A: return "Email";          // Application: Email
+        case 0x2192: return "Calculator";     // Application: Calculator
+        case 0x2221: return "Search";         // Browser: Search
+        case 0x2223: return "Home";           // Browser: Home
+        case 0x2224: return "Prev";           // Browser: Back
+        case 0x2225: return "Next";           // Browser: Next
+        case 0x2226: return "Stop";           // Browser: Stop
+        case 0x2227: return "Refresh";        // Browser: Reload
         default: return "";
       }
 //  case 0x30:     // Reserved
