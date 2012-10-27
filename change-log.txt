@@ -1,5 +1,7 @@
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121025 2.07  AJA Added extra Consumer Device function descriptions.
+                              These are optional, but make IRK easier to use.
            20121020 2.06  AJA Increased the WIDTH_ERROR_MARGIN from 100 to 300
                               microseconds (that to half the smallest pulse
                               width). This has fixed the sensitivity problem.
