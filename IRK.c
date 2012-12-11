@@ -336,6 +336,12 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121211 2.08  AJA Saved a huge amount of RAM and expanded text
+                              descriptions dramatically by copying text from
+                              ROM to RAM as it is needed (to display on the LCD
+                              for example). This is done using the _TEXT
+                              function and by specifying "const" on all functions
+                              that return a string.
            20121025 2.07  AJA Added extra Consumer Device function descriptions.
                               These are optional, but make IRK easier to use.
            20121020 2.06  AJA Increased the WIDTH_ERROR_MARGIN from 100 to 300
@@ -382,7 +388,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.07"
+#define IRK_VERSION "2.08"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -593,8 +599,18 @@ union
 #define USAGE_CONSUMER_DEVICE      0x20
 #define USAGE_LOCAL_IRK_FUNCTION   0xF0
 
-char * pUnshiftedKey;
-char * pShiftedKey;
+const char * pUnshiftedKey;
+const char * pShiftedKey;
+
+// Copies a text string from ROM into a RAM buffer (saves RAM)
+char * _TEXT(const char * p)
+{
+  static char sText[32];
+  char * q;
+  for (q=&sText; *q++ = *p++; );
+  return &sText;
+}
+
 
 void actionBacklightDelay ()
 {
@@ -626,7 +642,7 @@ void saveBacklightDelay ()
   actionBacklightDelay();
 }
 
-char * getKeyWithNoShift ()
+const char * getKeyWithNoShift () // Note: Literals returned as const are in ROM
 { // Keyboard key without SHIFT modifier key pressed
   switch (usbCommand.s.yy)
   {
@@ -683,7 +699,7 @@ char * getKeyWithNoShift ()
     case 0x36: return ",";             //  54  36  , <
     case 0x37: return ".";             //  55  37  . >
     case 0x38: return "/";             //  56  38  / ?
-    case 0x39: return "CapLck";        //  57  39  Caps lock
+    case 0x39: return "Caps Lock";     //  57  39  Caps lock
     case 0x3A: return "F1";            //  58  3A  F1
     case 0x3B: return "F2";            //  59  3B  F2
     case 0x3C: return "F3";            //  60  3C  F3
@@ -696,21 +712,21 @@ char * getKeyWithNoShift ()
     case 0x43: return "F10";           //  67  43  F10
     case 0x44: return "F11";           //  68  44  F11
     case 0x45: return "F12";           //  69  45  F12
-    case 0x46: return "PrtScr";        //  70  46  Print Screen
-    case 0x47: return "ScrLck";        //  71  47  Scroll Lock
+    case 0x46: return "Print Screen";  //  70  46  Print Screen
+    case 0x47: return "Scroll Lock";   //  71  47  Scroll Lock
     case 0x48: return "\6";            //  72  48  Pause (character generator)
-    case 0x49: return "Ins";           //  73  49  Insert
+    case 0x49: return "Insert";        //  73  49  Insert
     case 0x4A: return "Home";          //  74  4A  Home
-    case 0x4B: return "PgUp";          //  75  4B  Page Up
-    case 0x4C: return "Del";           //  76  4C  Delete
+    case 0x4B: return "Page Up";       //  75  4B  Page Up
+    case 0x4C: return "Delete";        //  76  4C  Delete
     case 0x4D: return "End";           //  77  4D  End
-    case 0x4E: return "PgDn";          //  78  4E  Page Down
+    case 0x4E: return "Page Down";     //  78  4E  Page Down
     case 0x4F: return "\3";            //  79  4F  Right (character generator)
     case 0x50: return "\4";            //  80  50  Left  (character generator)
     case 0x51: return "\2";            //  81  51  Down  (character generator)
     case 0x52: return "\1";            //  82  52  Up    (character generator)
-    case 0x53: return "NumLck";        //  83  53  Keypad Num Lock Clear
-/*
+    case 0x53: return "Num Lock";      //  83  53  Keypad Num Lock Clear
+
     case 0x54: return "Keypad /";      //  84  54  Keypad /
     case 0x55: return "Keypad *";      //  85  55  Keypad *
     case 0x56: return "Keypad -";      //  86  56  Keypad -
@@ -743,12 +759,12 @@ char * getKeyWithNoShift ()
     case 0x71: return "F22";           //  113 71  F22
     case 0x72: return "F23";           //  114 72  F23
     case 0x73: return "F24";           //  115 73  F24
-*/
+
     default: return "";
   }
 }
 
-char * getKeyWithShift()
+const char * getKeyWithShift() // Note: Literals returned as const are in ROM
 { // Keyboard key with SHIFT modifier key pressed
   switch (usbCommand.s.yy)
   {
@@ -801,7 +817,7 @@ char * getKeyWithShift()
     case 0x36: return "<";             //  54  36  , <
     case 0x37: return ">";             //  55  37  . >
     case 0x38: return "?";             //  56  38  / ?
-/*
+
     case 0x59: return "Keypad End";    //  89  59  Keypad 1 End
     case 0x5A: return "Keypad Down";   //  90  5A  Keypad 2 Down
     case 0x5B: return "Keypad PgDn";   //  91  5B  Keypad 3 PgDn
@@ -814,31 +830,13 @@ char * getKeyWithShift()
     case 0x62: return "Keypad Insert"; //  98  62  Keypad 0 Ins
     case 0x63: return "Keypad Delete"; //  99  63  Keypad . Del
                                        //  100 64  Non-US \ |
-*/
+
     default: return "";
   }
 }
 
-char * menu (char * pAction)  // This is just a RAM-saving hack
+const char * getDesc () // Note: Literals returned as const are in ROM
 {
-  char txt[] = "Menu      ";
-  txt[5] = 0;
-  return strcat(txt, pAction);
-}
-
-char * getDesc ()
-{
-// This is implemented as a function instead of a table lookup
-// because the PICF2550 has much more ROM (program) memory than
-// it has RAM (data) memory - and you can only use bank 0 to 3
-// (1024 bytes) of RAM when you use the USB module because the
-// USB module uses bank 4 to 7. 
-//
-// WARNING: Be careful when adding literal strings because if your RAM
-//          usage becomes more than 1024 bytes then you will experience
-//          unpredictable and very frustrating behaviour possibly leading
-//          to loss of hair and temporary insanity.
-
   unsigned int nFunction;
 
   nFunction = usbCommand.uxyy;  // ...compiles in less memory by doing this
@@ -867,13 +865,15 @@ char * getDesc ()
     case USAGE_CONSUMER_DEVICE:
       switch (nFunction)
       {
-        case 0x2040: return menu("");         // Menu
-        case 0x2041: return menu("OK");       // Menu Pick
-        case 0x2042: return menu("\1");       // Menu Up
-        case 0x2043: return menu("\2");       // Menu Down
-        case 0x2044: return menu("\4");       // Menu Left
-        case 0x2045: return menu("\3");       // Menu Right
-        case 0x2046: return menu("Exit");     // Menu Escape
+        case 0x2040: return "Menu";           // Menu (on/off)
+        case 0x2041: return "Menu Pick";      // Menu Pick
+        case 0x2042: return "Menu \1";        // Menu Up
+        case 0x2043: return "Menu \2";        // Menu Down
+        case 0x2044: return "Menu \4";        // Menu Left
+        case 0x2045: return "Menu \3";        // Menu Right
+        case 0x2046: return "Menu Exit";      // Menu Escape
+        case 0x2047: return "Menu +";         // Menu Value Increase
+        case 0x2048: return "Menu -";         // Menu Value Decrease
         case 0x209C: return "Ch+";            // Channel Up
         case 0x209D: return "Ch-";            // Channel Down
         case 0x20B0: return ">";              // Play
@@ -884,19 +884,24 @@ char * getDesc ()
         case 0x20B5: return ">>|";            // Next Track
         case 0x20B6: return "|<<";            // Previous Track
         case 0x20B7: return "Stop";           // Stop
+        case 0x20B8: return "Eject";          // Eject
         case 0x20CD: return ">/\6";           // Play / Pause
         case 0x20E2: return "Mute";           // Mute
         case 0x20E9: return "Vol+";           // Volume Up
         case 0x20EA: return "Vol-";           // Volume Down
-        case 0x2183: return "Media Player";   // Application: Media Player
+        case 0x2183: return "Media Player";   // Application: Consumer Control Configuration
+        case 0x2185: return "Text Editor";    // Application: Text Editor
         case 0x218A: return "Email";          // Application: Email
         case 0x2192: return "Calculator";     // Application: Calculator
-        case 0x2221: return "Search";         // Browser: Search
-        case 0x2223: return "Home";           // Browser: Home
-        case 0x2224: return "Prev";           // Browser: Back
-        case 0x2225: return "Next";           // Browser: Next
-        case 0x2226: return "Stop";           // Browser: Stop
-        case 0x2227: return "Refresh";        // Browser: Reload
+        case 0x2194: return "Computer";       // Application: Local Machine Browser
+        case 0x2196: return "Web Browser";    // Application: Web Browser
+        case 0x2221: return "Web Search";     // Browser: Search
+        case 0x2223: return "Web Home";       // Browser: Home
+        case 0x2224: return "Web Prev";       // Browser: Back
+        case 0x2225: return "Web Next";       // Browser: Next
+        case 0x2226: return "Web Stop";       // Browser: Stop
+        case 0x2227: return "Web Refresh";    // Browser: Reload
+        case 0x222A: return "Web Bookmarks";  // Browser: Bookmarks
         default: return "";
       }
 //  case 0x30:     // Reserved
@@ -1012,57 +1017,57 @@ void updateLCD()
     case USAGE_KEYBOARD:
       if (bSettingUsage)
       {
-         strcat(sLCDLine1,"Keyboard");
+         strcat(sLCDLine1,_TEXT("Keyboard"));
       }
       else
       {
         // Display key modifiers code and description
-        if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,"CTL ");
-        if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,"ALT ");
-        if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,"SHIFT");
-        if (!sLCDLine1[3])                    strcat(sLCDLine1,"Keyboard");
+        if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,_TEXT("CTL "));
+        if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,_TEXT("ALT "));
+        if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,_TEXT("SHIFT"));
+        if (!sLCDLine1[3])                    strcat(sLCDLine1,_TEXT("Keyboard"));
       }
       break;
     case USAGE_SYSTEM_CONTROL:
-      strcat(sLCDLine1,"System");
+      strcat(sLCDLine1,_TEXT("System"));
       break;
     case USAGE_CONSUMER_DEVICE:
-      strcat(sLCDLine1,"Consumer Dev");
+      strcat(sLCDLine1,_TEXT("Consumer Dev"));
       break;
     case USAGE_LOCAL_IRK_FUNCTION:
-      strcat(sLCDLine1,"IRK! Function");
+      strcat(sLCDLine1,_TEXT("IRK! Function"));
     default:
       break;
   }
 
   if (bSettingUsage)
   {
-    strcpy(sLCDLine2,"^^ Select Usage");
+    strcpy(sLCDLine2,_TEXT("\1\1 Select Usage"));  // ^^ Select Usage
   }
   else if (bSettingDeviceAddress)
   {
     c2x(nConfigDeviceAddress, sLCDLine2);
     sLCDLine2[2] = ' ';
     sLCDLine2[3] = 0;
-    strcat(sLCDLine2,"<- Address");
+    strcat(sLCDLine2,_TEXT("\4 Address"));  // <- Address
   }
   else if (bSettingBacklightDelay)
   {
     c2x(nNewBacklightDelay, sLCDLine2);
     sLCDLine2[2] = ' ';
     sLCDLine2[3] = 0;
-    strcat(sLCDLine2,"<- ");
+    strcat(sLCDLine2,_TEXT("\4 "));         // <-
     switch (nNewBacklightDelay)
     {
       case 0x00:
-        strcat(sLCDLine2,"Off");
+        strcat(sLCDLine2,_TEXT("Off"));
         break;
       case 0xFF:
-        strcat(sLCDLine2,"On");
+        strcat(sLCDLine2,_TEXT("On"));
         break;
       default:
-        ByteToStr(nNewBacklightDelay, sLCDLine2+6);
-        strcat(sLCDLine2," secs");
+        ByteToStr(nNewBacklightDelay, sLCDLine2+5);
+        strcat(sLCDLine2,_TEXT(" secs"));
     }
   }
   else
@@ -1071,7 +1076,7 @@ void updateLCD()
     c2x(usbCommand.s.yy, sLCDLine2);
     sLCDLine2[2] = ' ';
     sLCDLine2[3] = 0;
-    strncat(sLCDLine2, getDesc(), 13);
+    strncat(sLCDLine2, _TEXT(getDesc()), 13);
   }
   Lcd_Out(1,1,sLCDLine1);
   Lcd_Out(2,1,sLCDLine2);
@@ -1082,7 +1087,7 @@ void enableUSB()
   byte i;
 
   enableBacklight();                       // Conditionally turn on LCD backlight
-  Lcd_Out(2,1,"Enabling USB");
+  Lcd_Out(2,1,_TEXT("Enabling USB"));
 
   sUSBCommand[0] = REPORT_ID_KEYBOARD;     // Report Id = Keyboard
   sUSBCommand[1] = 0;                      // No modifiers
@@ -1107,13 +1112,13 @@ void enableUSB()
       delay_ms(5000);
     }
   }
-  Lcd_Out(2,1,"USB Ready   ");
+  Lcd_Out(2,1,_TEXT("USB Ready   "));
 }
 
 void disableUSB()
 {
   HID_Disable();
-  Lcd_Out(2,1,"USB Disabled");
+  Lcd_Out(2,1,_TEXT("USB Disabled"));
   bUSBReady = FALSE;
 }
 
@@ -1293,70 +1298,79 @@ void transmitInfraredCommand()
 
 void defineCustomCharacters()
 {
-  Lcd_Cmd(72);
+  // Symbol #0 is not being defined because to use it would mean putting
+  // null characters in the buffers to be written to the LCD. That's ok but
+  // it makes null-terminated string handling more difficult.
+
+  // Note that the Character Generator RAM expects symbols to be defined as
+  // 8 rows of 8 bits, but the LCD display cell size is only 8 rows of 5 bit
+  // (i.e. a 7 x 5 character cell, plus one row for an underscore).
+  // Consequently, the first three bits of each row are set to 0.
+  
+  Lcd_Cmd(72);      // Set CGRAM address to symbol #1 (symbol #0 is at 64)
   // 01 = Up Arrow
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(10);
-  Lcd_Chr_CP(21);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00001010); // 10
+  Lcd_Chr_CP(0b00010101); // 21
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
   // 02 = Down Arrow
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(21);
-  Lcd_Chr_CP(10);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00010101); // 21
+  Lcd_Chr_CP(0b00001010); // 10
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
   // 03 = Right Arrow
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(2);
-  Lcd_Chr_CP(29);
-  Lcd_Chr_CP(2);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000010); //  2
+  Lcd_Chr_CP(0b00011101); // 29
+  Lcd_Chr_CP(0b00000010); //  2
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
   // 04 = Left Arrow
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(8);
-  Lcd_Chr_CP(23);
-  Lcd_Chr_CP(8);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00001000); //  8
+  Lcd_Chr_CP(0b00010111); // 23
+  Lcd_Chr_CP(0b00001000); //  8
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
   // 05 = Tilde
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(9);
-  Lcd_Chr_CP(21);
-  Lcd_Chr_CP(18);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00001001); //  9
+  Lcd_Chr_CP(0b00010101); // 21
+  Lcd_Chr_CP(0b00010010); // 18
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
   // 06 = Pause
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(27);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00011011); // 27
+  Lcd_Chr_CP(0b00000000); //  0
   // 07 = Back slash
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(16);
-  Lcd_Chr_CP(8);
-  Lcd_Chr_CP(4);
-  Lcd_Chr_CP(2);
-  Lcd_Chr_CP(1);
-  Lcd_Chr_CP(0);
-  Lcd_Chr_CP(0);
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00010000); // 16
+  Lcd_Chr_CP(0b00001000); //  8
+  Lcd_Chr_CP(0b00000100); //  4
+  Lcd_Chr_CP(0b00000010); //  2
+  Lcd_Chr_CP(0b00000001); //  1
+  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000); //  0
   Lcd_Cmd(_LCD_RETURN_HOME);
 }
 
@@ -1439,7 +1453,7 @@ void Prolog()
   defineCustomCharacters();
   Lcd_Cmd(_LCD_CLEAR);                // Clear display
   Lcd_Cmd(_LCD_CURSOR_OFF);           // Cursor off
-  Lcd_Out(1,1,"IRK! v" IRK_VERSION);
+  Lcd_Out(1,1,_TEXT("IRK! v" IRK_VERSION));
 
 //----------------------------------------------------------------------------
 // Retrieve this device's configuration from EEPROM

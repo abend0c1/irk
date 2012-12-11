@@ -1,5 +1,11 @@
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121211 2.08  AJA Saved a huge amount of RAM and expanded text
+                              descriptions dramatically by copying text from
+                              ROM to RAM as it is needed (to display on the LCD
+                              for example). This is done using the _TEXT
+                              function and by specifying "const" on all functions
+                              that return a string.
            20121025 2.07  AJA Added extra Consumer Device function descriptions.
                               These are optional, but make IRK easier to use.
            20121020 2.06  AJA Increased the WIDTH_ERROR_MARGIN from 100 to 300
