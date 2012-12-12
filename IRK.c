@@ -556,6 +556,12 @@ byte nTypomaticSlowCount;
 
 
 // USB buffers must be in USB RAM, hence the "absolute" specifier...
+byte BANK4_RESERVED_FOR_USB[256] absolute 0x400; // Prevent compiler from allocating
+                                                 // RAM variables in Bank 4 because
+                                                 // the USB hardware uses that bank.
+                                                 // Refer to the PIC18F2550 datasheet
+                                                 // section "5.3.1 USB RAM" for more
+                                                 // information.
 byte sUSBResponse[1+1] absolute 0x500;  // Buffer for PIC <-- Host (ReportId + 1 byte)
 byte sUSBCommand[1+3]  absolute 0x508;  // Buffer for PIC --> Host (ReportId + 3 bytes)
 
