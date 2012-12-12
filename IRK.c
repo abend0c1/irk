@@ -336,6 +336,9 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121212 2.09  AJA Reserved RAM Bank 4 for USB use only. Corrected
+                              button press handling when setting backlight
+                              delay, device address or selecting usage.
            20121211 2.08  AJA Saved a huge amount of RAM and expanded text
                               descriptions dramatically by copying text from
                               ROM to RAM as it is needed (to display on the LCD
@@ -1791,22 +1794,25 @@ void main()
       TMR3L = 0;                  // Clear the Timer3 counter
       TMR3H = 0;
       T3CON.TMR3ON = ON;          // Turn on the "type-o-matic" repeat timer
-      if (TEACH_BUTTON_PRESSED)   // Transmit the current key via infrared
+      if (!bSettingUsage && !bSettingDeviceAddress && !bSettingBacklightDelay)
       {
-        transmitInfraredCommand();
-        while (TEACH_BUTTON_PRESSED);   // Wait for button to be released
+        if (TEACH_BUTTON_PRESSED)   // Transmit the current key via infrared
+        {
+          transmitInfraredCommand();
+          while (TEACH_BUTTON_PRESSED);   // Wait for button to be released
+        }
+        if (CTL_BUTTON_PRESSED)           // Toggle the CTL key modifier
+        {
+          usbCommand.s.ux.bits.LeftControl ^= 1;
+          while (CTL_BUTTON_PRESSED);     // Wait for button to be released
+        }
+        if (ALT_BUTTON_PRESSED)           // Toggle the ALT key modifier
+        {
+          usbCommand.s.ux.bits.LeftAlt ^= 1;
+          while (ALT_BUTTON_PRESSED);     // Wait for button to be released
+        }
+        if (SHIFT_BUTTON_PRESSED) handleShiftButton();
       }
-      if (CTL_BUTTON_PRESSED)           // Toggle the CTL key modifier
-      {
-        usbCommand.s.ux.bits.LeftControl ^= 1;
-        while (CTL_BUTTON_PRESSED);     // Wait for button to be released
-      }
-      if (ALT_BUTTON_PRESSED)           // Toggle the ALT key modifier
-      {
-        usbCommand.s.ux.bits.LeftAlt ^= 1;
-        while (ALT_BUTTON_PRESSED);     // Wait for button to be released
-      }
-      if (SHIFT_BUTTON_PRESSED) handleShiftButton();
       if (OK_BUTTON_PRESSED)    handleOKButton();
       if (UP_BUTTON_PRESSED)    adjustBy(+1, &isUpButtonPressed);
       if (DOWN_BUTTON_PRESSED)  adjustBy(-1, &isDownButtonPressed);
