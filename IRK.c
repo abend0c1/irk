@@ -52,6 +52,7 @@ FEATURES -
            IRK! devices can have one of 256 addresses (so you can have multiple IRK!'s)
            IRK! supports USB Consumer Device functions (e.g. Mute)
            IRK! has a programmable LCD backlight delay (or ON/OFF commands)
+           IRK! needs no host drivers on Windows, Linux etc
 
 PIN USAGE -                      PIC18F2550
                             .------------------.
@@ -61,7 +62,7 @@ PIN USAGE -                      PIC18F2550
             (LCD)       <-- | RA2  4    25 RB4 | <-- (SHIFT button)
             (LCD)       <-- | RA3  5    24 RB3 | <-- (IR receiver)
             (LCD)       <-- | RA4  6    23 RB2 | <-- (ALT button)
-            (LCD)       <-- | RA5  7    22 RB1 | <-- (CTL button)
+            (LCD)       <-- | RA5  7    22 RB1 | <-- (CTL/GUI button)
             (Ground)    --- | VSS  8    21 RB0 | <-- (TEACH button)
             (XTAL)      --- | OSC1 9    20 VDD | --- (+5V)
             (XTAL)      --- | OSC2 10   19 VSS | --- (Ground)
@@ -107,6 +108,7 @@ OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
             01 yy   CTRL key pressed along with key yy
             02 yy   SHIFT key presed along with key yy
             04 yy   ALT key pressed along with key yy
+            08 yy   GUI key pressed along with key yy
             Examples:
             00 05   b key pressed
             02 05   SHIFT+b key pressed (i.e. upper case B)
@@ -228,7 +230,7 @@ FORMATS -  1. The IR transmission format sent to, and received from, your
 
 EXAMPLE  - 1. The user wants to program the Enter key on the OK button of a
               learning remote control. The steps to follow are:
-              a. Plug in IRK! to a host USB port
+              a. Plug IRK! into a host USB port
               b. The default usage mode is Keyboard, which is displayed as
                  "00 Keyboard" in the first line of the LCD, so just
                  press and hold the UP button until the second line of the LCD
@@ -299,7 +301,7 @@ NOTES    - 1. The source code is written in MikroC Pro from mikroe.com
 
            5. IRK! will send *any* USB code that you select to the host - not
               just that ones that it displays with a name. For example, you can
-              program the USB Keyboard code for "Keypad *", code 55, even
+              program the USB Keyboard code for the "LANG1" key (code 90) even
               though IRK! displays this code as a blank line. To see a list of
               all the USB keyboard codes, refer to the "HID Usage Tables"
               document at:
@@ -318,7 +320,7 @@ NOTES    - 1. The source code is written in MikroC Pro from mikroe.com
               effectively reduce the distance at which the IR receiver can
               operate. As the AGC training burst is not really needed, it has
               been reduced in duration so as not to adversely affect the
-              operation of the TSOP4838 receiver.
+              operation of the TSOP4838 receiver as of v2.04.
 
 REFERENCE - USB Human Interface Device Usage Tables at:
             http://www.usb.org/developers/devclass_docs/Hut1_12v2.pdf
@@ -339,6 +341,10 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            20121212 2.09  AJA Reserved RAM Bank 4 for USB use only. Corrected
                               button press handling when setting backlight
                               delay, device address or selecting usage.
+                              Added ability to set the GUI key flag by pressing
+                              and holding the CTL key. The GUI key is a generic
+                              name for the Windows key, the Apple (Command) key,
+                              or the Super key on Linux systems.
            20121211 2.08  AJA Saved a huge amount of RAM and expanded text
                               descriptions dramatically by copying text from
                               ROM to RAM as it is needed (to display on the LCD
@@ -391,7 +397,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.08"
+#define IRK_VERSION "2.09"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -1031,10 +1037,20 @@ void updateLCD()
       else
       {
         // Display key modifiers code and description
-        if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,_TEXT("CTL "));
-        if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,_TEXT("ALT "));
-        if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,_TEXT("SHIFT"));
-        if (!sLCDLine1[3])                    strcat(sLCDLine1,_TEXT("Keyboard"));
+        switch (usbCommand.s.ux.byte & 0x0F)
+        {
+        case 0x00:  // if no modifier keys pressed
+          strcat(sLCDLine1,_TEXT("Keyboard"));
+          break;
+        case 0x0F:  // if all modifier keys pressed
+          strcat(sLCDLine1,_TEXT("GUI + ALL")); // text won't fit otherwise
+          break;
+        default:
+          if (usbCommand.s.ux.bits.LeftGUI)     strcat(sLCDLine1,_TEXT("GUI "));
+          if (usbCommand.s.ux.bits.LeftControl) strcat(sLCDLine1,_TEXT("CTL "));
+          if (usbCommand.s.ux.bits.LeftAlt)     strcat(sLCDLine1,_TEXT("ALT "));
+          if (usbCommand.s.ux.bits.LeftShift)   strcat(sLCDLine1,_TEXT("SHIFT"));
+        }
       }
       break;
     case USAGE_SYSTEM_CONTROL:
@@ -1758,6 +1774,24 @@ void handleShiftButton(void)
   updateLCD();
 }
 
+void handleCtlButton(void)
+{
+  usbCommand.s.ux.bits.LeftControl ^= 1;   // Toggle the CTL key modifier
+  while (CTL_BUTTON_PRESSED)
+  {
+    if (bTypomaticPending && nTypomaticDelay <= 0)
+    {
+      usbCommand.s.ux.bits.LeftControl ^= 1;   // Revert the CTL key modifier
+      usbCommand.s.ux.bits.LeftGUI ^= 1;   // Toggle the GUI key modifier
+      updateLCD();
+      while (CTL_BUTTON_PRESSED); // Make it a one-shot change
+      bTypomaticPending = FALSE;
+      nTypomaticDelay = 0;
+    }
+  }
+  updateLCD();
+}
+
 byte isUpButtonPressed()
 {
   return UP_BUTTON_PRESSED;
@@ -1801,11 +1835,7 @@ void main()
           transmitInfraredCommand();
           while (TEACH_BUTTON_PRESSED);   // Wait for button to be released
         }
-        if (CTL_BUTTON_PRESSED)           // Toggle the CTL key modifier
-        {
-          usbCommand.s.ux.bits.LeftControl ^= 1;
-          while (CTL_BUTTON_PRESSED);     // Wait for button to be released
-        }
+        if (CTL_BUTTON_PRESSED) handleCtlButton();
         if (ALT_BUTTON_PRESSED)           // Toggle the ALT key modifier
         {
           usbCommand.s.ux.bits.LeftAlt ^= 1;

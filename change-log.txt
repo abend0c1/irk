@@ -1,5 +1,12 @@
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20121213 2.09  AJA Reserved RAM Bank 4 for USB use only. Corrected
+                              button press handling when setting backlight
+                              delay, device address or selecting usage.
+                              Added ability to set the GUI key flag by pressing
+                              and holding the CTL key. The GUI key is a generic
+                              name for the Windows key, the Apple (Command) key,
+                              or the Super key on Linux systems.
            20121211 2.08  AJA Saved a huge amount of RAM and expanded text
                               descriptions dramatically by copying text from
                               ROM to RAM as it is needed (to display on the LCD
