@@ -57,12 +57,12 @@ FEATURES -
 PIN USAGE -                      PIC18F2550
                             .------------------.
             (Sense USB) --> | RE3  1    28 RB7 | <-- (DOWN button)
-            (LCD)       <-- | RA0  2    27 RB6 | <-- (UP button)
-            (LCD)       <-- | RA1  3    26 RB5 | <-- (OK button)
-            (LCD)       <-- | RA2  4    25 RB4 | <-- (SHIFT button)
-            (LCD)       <-- | RA3  5    24 RB3 | <-- (IR receiver)
-            (LCD)       <-- | RA4  6    23 RB2 | <-- (ALT button)
-            (LCD)       <-- | RA5  7    22 RB1 | <-- (CTL/GUI button)
+            (LCD D4)    <-- | RA0  2    27 RB6 | <-- (UP button)
+            (LCD D5)    <-- | RA1  3    26 RB5 | <-- (OK button)
+            (LCD D6)    <-- | RA2  4    25 RB4 | <-- (SHIFT button)
+            (LCD D7)    <-- | RA3  5    24 RB3 | <-- (IR receiver)
+            (LCD RS)    <-- | RA4  6    23 RB2 | <-- (ALT button)
+            (LCD EN)    <-- | RA5  7    22 RB1 | <-- (CTL/GUI button)
             (Ground)    --- | VSS  8    21 RB0 | <-- (TEACH button)
             (XTAL)      --- | OSC1 9    20 VDD | --- (+5V)
             (XTAL)      --- | OSC2 10   19 VSS | --- (Ground)
