@@ -1,6 +1,6 @@
 /*
   IRK! Infrared Remote Controlled USB Keyboard $Rev:  $
-  Copyright (C) 2010 Andrew J. Armstrong
+  Copyright (C) 2010-2013 Andrew J. Armstrong
 
   This file is part of IRK!.
 
@@ -94,7 +94,7 @@ const char configDescriptor1[] =
     // Configuration Descriptor
     0x09,                   // bLength             - Descriptor size in bytes
     0x02,                   // bDescriptorType     - The constant CONFIGURATION (02h)
-    0x29,0x00,              // wTotalLength        - The number of bytes in the configuration descriptor and all of its subordinate descriptors
+    41,0x00,                // wTotalLength        - The number of bytes in the configuration descriptor and all of its subordinate descriptors
     1,                      // bNumInterfaces      - Number of interfaces in the configuration
     1,                      // bConfigurationValue - Identifier for Set Configuration and Get Configuration requests
     STRING_INDEX_IRK,       // iConfiguration      - Index of string descriptor for the configuration
@@ -137,7 +137,7 @@ const char configDescriptor1[] =
     0x07,                   // bLength - Descriptor size in bytes (07h)
     0x05,                   // bDescriptorType - The constant Endpoint (05h)
     USB_HID_EP | 0x80,      // bEndpointAddress - Endpoint number (0x01) and direction (0x80 = IN to host)
-    USB_TRANSFER_TYPE,      // bmAttributes - Transfer type and supplementary information    
+    USB_TRANSFER_TYPE,      // bmAttributes - Transfer type and supplementary information
     0x08,0x00,              // wMaxPacketSize - Maximum packet size supported
                             // This determines the size of the transmission time slot allocated to this device
     EP_IN_INTERVAL,         // bInterval - Service interval or NAK rate
@@ -334,6 +334,10 @@ A1 01     M COLLECTION (Application)
 C0        M END_COLLECTION
 
 */
+
+
+
+
 //Language code string descriptor
 const struct 
 {
@@ -369,9 +373,9 @@ const struct tagProduct
   unsigned int string[32]; // Max number of (2-byte) "characters"
 } sProduct =
   {
-    64,           //sizeof this descriptor string (including length and type fields)
+    54,           //sizeof this descriptor string (including length and type fields)
     0x03,
-    {'I','R','K','!',' ','R','e','m','o','t','e',' ','C','o','n','t','r','o','l','l','e','d',' ','K','e','y','b','o','a','r','d'}
+    {'R','e','m','o','t','e',' ','C','o','n','t','r','o','l','l','e','d',' ','K','e','y','b','o','a','r','d'}
   };
   
 

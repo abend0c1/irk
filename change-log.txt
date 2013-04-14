@@ -1,5 +1,16 @@
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20130413 2.11  AJA Recompiled for MikroC 6.0 which appears to be
+                              case-sensitive now (for example, library routines
+                              must be spelled properly).
+           20130213 2.10  AJA Detect whether any buttons are pressed at power
+                              up (or, equivalently, an ICSP programmer is still
+                              plugged in) and display a "Release Buttons!" 
+                              message until the situation is rectified.
+                              Enabled USB Full Speed mode, so IRK will run in
+                              either Full Speed or Low Speed mode. Before IRK
+                              only worked in Low Speed mode.
+                              Recompiled with MikroC v5.80.
            20121213 2.09  AJA Reserved RAM Bank 4 for USB use only. Corrected
                               button press handling when setting backlight
                               delay, device address or selecting usage.

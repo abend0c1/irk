@@ -35,8 +35,8 @@ Count=0
 Count=0
 [SEARCH_PATH]
 Count=4
-Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\defs\
-Path1=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\uses\P18\
+Path0=C:\users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\defs\
+Path1=C:\users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\uses\P18\
 Path2=D:\_work\projects\IRK\
 Path3=D:\_work\projects\MikroC\IRK!\
 [HEADER_PATH]

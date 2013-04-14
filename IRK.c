@@ -1,6 +1,6 @@
 /*
   IRK! Infrared Remote Controlled USB Keyboard $Rev:  $
-  Copyright (C) 2010-2012 Andrew J. Armstrong
+  Copyright (C) 2010-2013 Andrew J. Armstrong
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -338,6 +338,17 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20130413 2.11  AJA Recompiled for MikroC 6.0 which appears to be
+                              case-sensitive now (for example, library routines
+                              must be spelled properly).
+           20130213 2.10  AJA Detect whether any buttons are pressed at power
+                              up (or, equivalently, an ICSP programmer is still
+                              plugged in) and display a "Release Buttons!" 
+                              message until the situation is rectified.
+                              Enabled USB Full Speed mode, so IRK will run in
+                              either Full Speed or Low Speed mode. Before IRK
+                              only worked in Low Speed mode.
+                              Recompiled with MikroC v5.80.
            20121212 2.09  AJA Reserved RAM Bank 4 for USB use only. Corrected
                               button press handling when setting backlight
                               delay, device address or selecting usage.
@@ -397,7 +408,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "2.09"
+#define IRK_VERSION "2.11"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -647,13 +658,13 @@ void actionBacklightDelay ()
 
 void loadBacklightDelay ()
 {
-  nConfigBacklightDelay = Eeprom_read(1);   // Backlight on for nn seconds
+  nConfigBacklightDelay = EEPROM_Read(1);   // Backlight on for nn seconds
   actionBacklightDelay();
 }
 
 void saveBacklightDelay ()
 {
-  Eeprom_write(1, nConfigBacklightDelay);
+  EEPROM_Write(1, nConfigBacklightDelay);
   actionBacklightDelay();
 }
 
@@ -1112,7 +1123,7 @@ void enableUSB()
   byte i;
 
   enableBacklight();                       // Conditionally turn on LCD backlight
-  Lcd_Out(2,1,_TEXT("Enabling USB"));
+  Lcd_Out(2,1,_TEXT("Enabling USB    "));
 
   sUSBCommand[0] = REPORT_ID_KEYBOARD;     // Report Id = Keyboard
   sUSBCommand[1] = 0;                      // No modifiers
@@ -1125,16 +1136,16 @@ void enableUSB()
     for (i=0; !bUSBReady && i < 50; i++)
     {
       ACTIVITY_LED = ON;    // Flash activity to indicate init in progress
-      delay_ms(50);
+      Delay_ms(50);
       ACTIVITY_LED = OFF;
-      delay_ms(50);
+      Delay_ms(50);
       bUSBReady = HID_Write(&sUSBCommand, 4) != 0; // Copy to USB buffer and try to send
     }
     if (!bUSBReady)
     {
       enableBacklight();      // Keep LCD backlight on while retrying USB init
       HID_Disable();
-      delay_ms(5000);
+      Delay_ms(5000);
     }
   }
   Lcd_Out(2,1,_TEXT("USB Ready   "));
@@ -1194,12 +1205,12 @@ void performLocalIRKFunction()
   {
     case CMD_PRESS_POWER_SWITCH:
       POWER_SWITCH = ON;
-      delay_ms(250);
+      Delay_ms(250);
       POWER_SWITCH = OFF;
       break;
     case CMD_PRESS_RESET_SWITCH:
       RESET_SWITCH = ON;
-      delay_ms(250);
+      Delay_ms(250);
       RESET_SWITCH = OFF;
       break;
     case CMD_INIT_USB:
@@ -1207,11 +1218,11 @@ void performLocalIRKFunction()
       enableUSB();
       break;
     case CMD_SET_BACKLIGHT_OFF:   // User wants backlight temporarily OFF
-      nConfigBackLightDelay = 0x00;
+      nConfigBacklightDelay = 0x00;
       actionBacklightDelay();
       break;
     case CMD_SET_BACKLIGHT_ON:    // User wants backlight temporarily ON
-      nConfigBackLightDelay = 0xFF;
+      nConfigBacklightDelay = 0xFF;
       actionBacklightDelay();
       break;
     case CMD_SET_DEBUG_OFF:
@@ -1278,7 +1289,7 @@ void enableInfraredCapture()
 void transmitInfraredShortMark()
 {
   PWM1_Start();
-  delay_us(WIDTH_SHORT);    // Send a short mark
+  Delay_us(WIDTH_SHORT);    // Send a short mark
   PWM1_Stop();
 }
 
@@ -1289,9 +1300,9 @@ void transmitInfraredByte (byte b)
   {
     transmitInfraredShortMark();          // Send a short mark
     if (b & 0b10000000)       // If next bit is a 1
-      delay_us(WIDTH_LONG);   // Send a long space
+      Delay_us(WIDTH_LONG);   // Send a long space
     else
-      delay_us(WIDTH_SHORT);  // Send a short space
+      Delay_us(WIDTH_SHORT);  // Send a short space
     b <<= 1;
   }
 }
@@ -1308,15 +1319,15 @@ void transmitInfraredCommand()
   irCommand.s.nCommand           =  usbCommand.s.yy;
   irCommand.s.nCommandInverted   = ~usbCommand.s.yy;
   PWM1_Start();
-  delay_us(WIDTH_TRAINING_PULSE);
+  Delay_us(WIDTH_TRAINING_PULSE);
   PWM1_Stop();
-  delay_us(WIDTH_SILENCE_AFTER_TRAINING);
+  Delay_us(WIDTH_SILENCE_AFTER_TRAINING);
   for (i = 0; i < sizeof irCommand.b; i++)
   {
     transmitInfraredByte(irCommand.b[i]);
   }
   transmitInfraredShortMark();      // Send a short mark to end
-  delay_ms(100);                    // Pause between transmitted IR commands
+  Delay_ms(100);                    // Pause between transmitted IR commands
   enableInfraredCapture();
   ACTIVITY_LED = OFF;
 }
@@ -1409,8 +1420,10 @@ void Prolog()
 
   // Set up USB
   UCFG.UPUEN = 1;         // USB On-chip pull-up enable
-  UCFG.FSEN = 0;          // 1 = USB Full Speed enabled (requires 48 MHz MCU clock)
-                          // 0 = USB Full Speed disabled (requires 6 MHz MCU clock)
+  UCFG.FSEN = 1;          // 1 = USB Full Speed enabled (requires 48 MHz USB clock)
+                          //     IRK will work in Full Speed or Low Speed
+                          // 0 = USB Full Speed disabled (requires 6 MHz USB clock)
+                          //     IRK will work in Low Speed only
 
 // Set up the Timer0 module to timeout the LCD backlight...
   T0CON   = 0b00000111;
@@ -1421,7 +1434,7 @@ void Prolog()
 //                x          0  = Timer0 prescaler assigned
 //                 xxx       111= Timer0 prescaler (1:256)
 // Timer0 tick rate = 24 MHz clock/4/256 = 23437.5 Hz
-// ...so we can set a 1 second delay by storing 65535-23437 in TMR0H:TMR0L
+// ...so we can set a 1 second delay by storing 65535-23437=42098 in TMR0H:TMR0L
 
 
 // Use this Timer1 config for low-speed USB...
@@ -1447,7 +1460,6 @@ void Prolog()
 
   INTCON.GIE = 1;         // Enable global interrupts
   INTCON.PEIE = 1;        // Enable peripheral interrupts
-  PIE2.TMR3IE = 1;        // Enable Timer3 interrupts
 
   INTCON2.NOT_RBPU = 0;   // Enable PORTB weak pull-ups (PIC 18F2550)
 
@@ -1480,11 +1492,20 @@ void Prolog()
   Lcd_Cmd(_LCD_CURSOR_OFF);           // Cursor off
   Lcd_Out(1,1,_TEXT("IRK! v" IRK_VERSION));
 
+  if (((PORTB & 0b11110111) ^ 0b11110111))     // If any button is pressed (low)
+  {  // ...then (probably) the ICSP programmer is still connected
+     // which is the same as pressing and holding a button or two
+    Lcd_Out(2,1,_TEXT("Release buttons!" ));
+    while (((PORTB & 0b11110111) ^ 0b11110111));
+  }
+
+  PIE2.TMR3IE = 1;        // Enable Timer3 interrupts
+
 //----------------------------------------------------------------------------
 // Retrieve this device's configuration from EEPROM
 //----------------------------------------------------------------------------
 
-  nConfigDeviceAddress = Eeprom_read(0);    // This IRK! device's IR address
+  nConfigDeviceAddress = EEPROM_Read(0);    // This IRK! device's IR address
   loadBacklightDelay();
 
 //----------------------------------------------------------------------------
@@ -1604,7 +1625,7 @@ void interrupt()            // High priority interrupt service routine
   else if (INTCON.TMR0IF)        // If backlight timeout interrupt
   {
     nBacklightDelay--;      // Decrement seconds remaining with backlight on
-    if (nBackLightDelay == 0)
+    if (nBacklightDelay == 0)
     {
       LCD_BACKLIGHT = 1;    // Turn backlight off (0=On, 1=Off)
       T0CON.TMR0ON = 0;     // Turn off Timer0
@@ -1635,7 +1656,7 @@ void handleOKButton(void)
         }
         else // Exiting from address selection, so save the selected address in EEPROM
         {
-          Eeprom_write(0, nConfigDeviceAddress);
+          EEPROM_Write(0, nConfigDeviceAddress);
         }
         break;
       case CMD_SET_BACKLIGHT_DELAY: // If user is setting the LCD backlight delay time
@@ -1651,11 +1672,11 @@ void handleOKButton(void)
         }
         break;
       case CMD_SET_BACKLIGHT_OFF:   // User wants backlight always OFF
-        nConfigBackLightDelay = 0x00;
+        nConfigBacklightDelay = 0x00;
         saveBacklightDelay();
         break;
       case CMD_SET_BACKLIGHT_ON:    // User wants backlight always ON
-        nConfigBackLightDelay = 0xFF;
+        nConfigBacklightDelay = 0xFF;
         saveBacklightDelay();
         break;
       default:
@@ -1823,7 +1844,7 @@ void main()
     if (((PORTB & 0b11110111) ^ 0b11110111))     // If any button is pressed (low)
     {
       enableBacklight();          // Conditionally turn on LCD backlight
-      delay_ms(25);               // Debounce delay
+      Delay_ms(25);               // Debounce delay
       nTypomaticDelay = 3;        // Number of typomatic interrupts before repeating
       TMR3L = 0;                  // Clear the Timer3 counter
       TMR3H = 0;
