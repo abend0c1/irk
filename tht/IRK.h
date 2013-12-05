@@ -1,0 +1,3 @@
+#define REPORT_ID_KEYBOARD          'K'
+#define REPORT_ID_SYSTEM_CONTROL    'S'
+#define REPORT_ID_CONSUMER_DEVICE   'C'
