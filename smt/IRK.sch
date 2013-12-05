@@ -13743,26 +13743,6 @@ Source: www.kingbright.com</description>
 <text x="-0.8255" y="1.778" size="0.4064" layer="25">&gt;NAME</text>
 <text x="-1.016" y="-0.1905" size="0.4064" layer="27">&gt;VALUE</text>
 </package>
-<package name="TACTILE_SWITCH_SMD">
-<wire x1="-1.54" y1="-2.54" x2="-2.54" y2="-1.54" width="0.2032" layer="51"/>
-<wire x1="-2.54" y1="-1.24" x2="-2.54" y2="1.27" width="0.2032" layer="21"/>
-<wire x1="-2.54" y1="1.54" x2="-1.54" y2="2.54" width="0.2032" layer="51"/>
-<wire x1="-1.54" y1="2.54" x2="1.54" y2="2.54" width="0.2032" layer="21"/>
-<wire x1="1.54" y1="2.54" x2="2.54" y2="1.54" width="0.2032" layer="51"/>
-<wire x1="2.54" y1="1.24" x2="2.54" y2="-1.24" width="0.2032" layer="21"/>
-<wire x1="2.54" y1="-1.54" x2="1.54" y2="-2.54" width="0.2032" layer="51"/>
-<wire x1="1.54" y1="-2.54" x2="-1.54" y2="-2.54" width="0.2032" layer="21"/>
-<wire x1="1.905" y1="1.27" x2="1.905" y2="0.445" width="0.127" layer="51"/>
-<wire x1="1.905" y1="0.445" x2="2.16" y2="-0.01" width="0.127" layer="51"/>
-<wire x1="1.905" y1="-0.23" x2="1.905" y2="-1.115" width="0.127" layer="51"/>
-<circle x="0" y="0" radius="1.27" width="0.2032" layer="21"/>
-<smd name="1" x="-2.54" y="1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<smd name="2" x="2.54" y="1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<smd name="3" x="-2.54" y="-1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<smd name="4" x="2.54" y="-1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
-<text x="-2.159" y="3.048" size="1.27" layer="25" font="vector">&gt;NAME</text>
-<text x="-2.159" y="4.953" size="1.27" layer="27" font="vector">&gt;VALUE</text>
-</package>
 <package name="SMA-DIODE">
 <description>&lt;B&gt;Diode&lt;/B&gt;&lt;p&gt;
 Basic SMA packaged diode</description>
@@ -14018,25 +13998,18 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <pin name="E" x="2.54" y="5.08" visible="off" length="short" direction="pas" swaplevel="2" rot="R270"/>
 </symbol>
 <symbol name="SWITCH-MOMENTARY">
-<wire x1="1.905" y1="0" x2="2.54" y2="0" width="0.254" layer="94"/>
-<wire x1="1.905" y1="4.445" x2="1.905" y2="3.175" width="0.254" layer="94"/>
-<wire x1="-1.905" y1="4.445" x2="-1.905" y2="3.175" width="0.254" layer="94"/>
-<wire x1="1.905" y1="4.445" x2="0" y2="4.445" width="0.254" layer="94"/>
-<wire x1="0" y1="4.445" x2="-1.905" y2="4.445" width="0.254" layer="94"/>
-<wire x1="0" y1="2.54" x2="0" y2="1.905" width="0.1524" layer="94"/>
-<wire x1="0" y1="1.27" x2="0" y2="0.635" width="0.1524" layer="94"/>
-<wire x1="0" y1="4.445" x2="0" y2="3.175" width="0.1524" layer="94"/>
 <wire x1="2.54" y1="-2.54" x2="2.54" y2="0" width="0.1524" layer="94"/>
 <wire x1="-2.54" y1="-2.54" x2="-2.54" y2="0" width="0.1524" layer="94"/>
-<wire x1="-2.54" y1="0" x2="1.905" y2="1.27" width="0.254" layer="94"/>
-<circle x="-2.54" y="0" radius="0.127" width="0.4064" layer="94"/>
-<circle x="2.54" y="0" radius="0.127" width="0.4064" layer="94"/>
-<text x="-2.54" y="6.35" size="1.778" layer="95">&gt;NAME</text>
+<circle x="-2.54" y="0" radius="0.254" width="0.4064" layer="94"/>
+<circle x="2.54" y="0" radius="0.254" width="0.4064" layer="94"/>
+<text x="-2.54" y="3.81" size="1.778" layer="95">&gt;NAME</text>
 <text x="-2.54" y="-6.35" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="1" x="-5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="2"/>
 <pin name="3" x="5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="4" x="5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="2" x="-5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="2"/>
+<wire x1="-2.54" y1="1.27" x2="2.54" y2="1.27" width="0.254" layer="94"/>
+<rectangle x1="-1.27" y1="1.27" x2="1.27" y2="1.905" layer="94"/>
 </symbol>
 <symbol name="DIODE-SCHOTTKY">
 <wire x1="-1.27" y1="-1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
@@ -14063,9 +14036,9 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <wire x1="1.27" y1="2.54" x2="-1.016" y2="3.81" width="0.254" layer="94"/>
 <wire x1="-1.016" y1="3.81" x2="0" y2="4.572" width="0.254" layer="94"/>
 <wire x1="0" y1="4.572" x2="0" y2="5.08" width="0.1524" layer="94"/>
-<wire x1="1.27" y1="0" x2="2.54" y2="1.27" width="0.2032" layer="94"/>
-<wire x1="2.54" y1="-1.27" x2="1.27" y2="0" width="0.2032" layer="94"/>
-<wire x1="2.54" y1="1.27" x2="2.54" y2="-1.27" width="0.2032" layer="94"/>
+<wire x1="1.27" y1="0" x2="2.54" y2="1.27" width="0.254" layer="94"/>
+<wire x1="2.54" y1="-1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
+<wire x1="2.54" y1="1.27" x2="2.54" y2="-1.27" width="0.254" layer="94"/>
 <wire x1="2.032" y1="-4.699" x2="2.032" y2="-2.159" width="0.1524" layer="94"/>
 <wire x1="2.032" y1="-2.159" x2="2.667" y2="-3.429" width="0.1524" layer="94"/>
 <wire x1="2.667" y1="-3.429" x2="1.397" y2="-3.429" width="0.1524" layer="94"/>
@@ -14248,33 +14221,20 @@ and switching applications at collector currents of 10 mA to 100 mA
 </device>
 </devices>
 </deviceset>
-<deviceset name="TAC_SWITCH" prefix="S" uservalue="yes">
+<deviceset name="C&amp;K-PTS525" prefix="S" uservalue="yes">
 <description>&lt;b&gt;Momentary Switch&lt;/b&gt;&lt;br&gt;
 C&amp;K Switches PTS 525 Series
 Microminiature Tactile Switch for SMT</description>
 <gates>
-<gate name="S" symbol="SWITCH-MOMENTARY" x="0" y="0"/>
+<gate name="&gt;NAME" symbol="SWITCH-MOMENTARY" x="0" y="0"/>
 </gates>
 <devices>
-<device name="SMD" package="TACTILE_SWITCH_SMD">
+<device name="-SM10" package="PTH525-SM10">
 <connects>
-<connect gate="S" pin="1" pad="1"/>
-<connect gate="S" pin="2" pad="2"/>
-<connect gate="S" pin="3" pad="3"/>
-<connect gate="S" pin="4" pad="4"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="SPARKFUN" value="SWCH-08247"/>
-</technology>
-</technologies>
-</device>
-<device name="PTH525" package="PTH525-SM10">
-<connects>
-<connect gate="S" pin="1" pad="1"/>
-<connect gate="S" pin="2" pad="2"/>
-<connect gate="S" pin="3" pad="3"/>
-<connect gate="S" pin="4" pad="4"/>
+<connect gate="&gt;NAME" pin="1" pad="1"/>
+<connect gate="&gt;NAME" pin="2" pad="2"/>
+<connect gate="&gt;NAME" pin="3" pad="3"/>
+<connect gate="&gt;NAME" pin="4" pad="4"/>
 </connects>
 <technologies>
 <technology name="">
@@ -14419,13 +14379,13 @@ Microminiature Tactile Switch for SMT</description>
 <part name="C4" library="rcl" deviceset="C-EU" device="C0805" value="100nF"/>
 <part name="C3" library="rcl" deviceset="C-EU" device="C0805" value="100nF"/>
 <part name="Q2" library="irk" deviceset="MMBT3906" device="SOT23" value="MMBT3906"/>
-<part name="S1" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="DOWN"/>
-<part name="S2" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="UP"/>
-<part name="S3" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="OK"/>
-<part name="S4" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="SHIFT"/>
-<part name="S5" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="ALT"/>
-<part name="S6" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="CTL"/>
-<part name="S7" library="irk" deviceset="TAC_SWITCH" device="PTH525" value="TEACH"/>
+<part name="S1" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="DOWN"/>
+<part name="S2" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="UP"/>
+<part name="S3" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="OK"/>
+<part name="S4" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="SHIFT"/>
+<part name="S5" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="ALT"/>
+<part name="S6" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="CTL"/>
+<part name="S7" library="irk" deviceset="C&amp;K-PTS525" device="-SM10" value="TEACH"/>
 <part name="D2" library="irk" deviceset="SS14" device="" value="SS14"/>
 <part name="D1" library="irk" deviceset="SS14" device="" value="SS14"/>
 <part name="D3" library="irk" deviceset="SS14" device="" value="SS14"/>
@@ -14502,31 +14462,31 @@ Microminiature Tactile Switch for SMT</description>
 <instance part="C4" gate="G$1" x="33.02" y="-17.78"/>
 <instance part="C3" gate="G$1" x="38.1" y="-17.78"/>
 <instance part="Q2" gate="&gt;NAME" x="-63.5" y="96.52"/>
-<instance part="S1" gate="S" x="261.62" y="-17.78" smashed="yes" rot="R90">
+<instance part="S1" gate="&gt;NAME" x="261.62" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="255.27" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="257.81" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="S2" gate="S" x="248.92" y="-17.78" smashed="yes" rot="R90">
+<instance part="S2" gate="&gt;NAME" x="248.92" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="242.57" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="245.11" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="S3" gate="S" x="236.22" y="-17.78" smashed="yes" rot="R90">
+<instance part="S3" gate="&gt;NAME" x="236.22" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="229.87" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="232.41" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="S4" gate="S" x="223.52" y="-17.78" smashed="yes" rot="R90">
+<instance part="S4" gate="&gt;NAME" x="223.52" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="217.17" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="219.71" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="S5" gate="S" x="210.82" y="-17.78" smashed="yes" rot="R90">
+<instance part="S5" gate="&gt;NAME" x="210.82" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="204.47" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="207.01" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="S6" gate="S" x="198.12" y="-17.78" smashed="yes" rot="R90">
+<instance part="S6" gate="&gt;NAME" x="198.12" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="191.77" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="194.31" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="S7" gate="S" x="182.88" y="-17.78" smashed="yes" rot="R90">
+<instance part="S7" gate="&gt;NAME" x="182.88" y="-17.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="176.53" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="179.07" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
@@ -14693,7 +14653,7 @@ Microminiature Tactile Switch for SMT</description>
 <junction x="170.18" y="63.5"/>
 <pinref part="IC1" gate="G$1" pin="RB7/BKI3/PGD"/>
 <pinref part="JP2" gate="A" pin="4"/>
-<pinref part="S1" gate="S" pin="3"/>
+<pinref part="S1" gate="&gt;NAME" pin="3"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -14707,7 +14667,7 @@ Microminiature Tactile Switch for SMT</description>
 <junction x="172.72" y="60.96"/>
 <pinref part="IC1" gate="G$1" pin="RB6/KBI2/PGC"/>
 <pinref part="JP2" gate="A" pin="5"/>
-<pinref part="S2" gate="S" pin="3"/>
+<pinref part="S2" gate="&gt;NAME" pin="3"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -14721,7 +14681,7 @@ Microminiature Tactile Switch for SMT</description>
 <junction x="175.26" y="58.42"/>
 <pinref part="IC1" gate="G$1" pin="RB5/KBI1/PGM"/>
 <pinref part="JP2" gate="A" pin="6"/>
-<pinref part="S3" gate="S" pin="3"/>
+<pinref part="S3" gate="&gt;NAME" pin="3"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -14729,7 +14689,7 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="223.52" y1="-12.7" x2="223.52" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="223.52" y1="55.88" x2="116.84" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="RB4/AN11/KBI0/CSSPP"/>
-<pinref part="S4" gate="S" pin="3"/>
+<pinref part="S4" gate="&gt;NAME" pin="3"/>
 </segment>
 </net>
 <net name="N$16" class="0">
@@ -14739,7 +14699,7 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="220.98" y1="-7.62" x2="220.98" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="50.8" x2="116.84" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="RB2/AN8/INT2/VMO"/>
-<pinref part="S5" gate="S" pin="3"/>
+<pinref part="S5" gate="&gt;NAME" pin="3"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -14749,7 +14709,7 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="198.12" y1="-5.08" x2="218.44" y2="-5.08" width="0.1524" layer="91"/>
 <wire x1="218.44" y1="-5.08" x2="218.44" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="RB1/AN10/INT1/SCK/SCL"/>
-<pinref part="S6" gate="S" pin="3"/>
+<pinref part="S6" gate="&gt;NAME" pin="3"/>
 </segment>
 </net>
 <net name="N$18" class="0">
@@ -14759,7 +14719,7 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="215.9" y1="-2.54" x2="215.9" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="45.72" x2="116.84" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="RB0/AN12/INT0/LFT0/SDI/SDA"/>
-<pinref part="S7" gate="S" pin="4"/>
+<pinref part="S7" gate="&gt;NAME" pin="4"/>
 </segment>
 </net>
 <net name="N$20" class="0">
@@ -14929,13 +14889,13 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="248.92" y1="-22.86" x2="248.92" y2="-35.56" width="0.1524" layer="91"/>
 <junction x="223.52" y="-35.56"/>
 <pinref part="GND29" gate="1" pin="GND"/>
-<pinref part="S1" gate="S" pin="1"/>
-<pinref part="S2" gate="S" pin="1"/>
-<pinref part="S3" gate="S" pin="1"/>
-<pinref part="S4" gate="S" pin="1"/>
-<pinref part="S5" gate="S" pin="1"/>
-<pinref part="S6" gate="S" pin="1"/>
-<pinref part="S7" gate="S" pin="2"/>
+<pinref part="S1" gate="&gt;NAME" pin="1"/>
+<pinref part="S2" gate="&gt;NAME" pin="1"/>
+<pinref part="S3" gate="&gt;NAME" pin="1"/>
+<pinref part="S4" gate="&gt;NAME" pin="1"/>
+<pinref part="S5" gate="&gt;NAME" pin="1"/>
+<pinref part="S6" gate="&gt;NAME" pin="1"/>
+<pinref part="S7" gate="&gt;NAME" pin="2"/>
 </segment>
 <segment>
 <wire x1="7.62" y1="71.12" x2="7.62" y2="104.14" width="0.1524" layer="91"/>
