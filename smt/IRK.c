@@ -492,10 +492,10 @@ sbit DOWN_BUTTON             at RB7_bit;
 sbit ACTIVITY_LED            at LATC0_bit;  // Activity indicator LED
 sbit LCD_BACKLIGHT           at LATC1_bit;  // LCD backlight (active low)
 sbit IR_LED                  at LATC2_bit;  // IR Transmitter
-// Inputs
 sbit POWER_SWITCH            at RC6_bit;  // Power switch
 sbit RESET_SWITCH            at RC7_bit;  // Reset switch
 sbit AUX_SWITCH              at RA6_bit;  // Auxiliary switch
+// Inputs
 sbit USB_POWER_GOOD          at RE3_bit;  // USB Power Good detection
 
 volatile signed short nTypomaticDelay;
@@ -550,6 +550,7 @@ byte nTypomaticSlowCount;
 #define CMD_SET_BACKLIGHT_DELAY       0x06
 #define CMD_SET_DEBUG_ON              0x07
 #define CMD_SET_DEBUG_OFF             0x08
+#define CMD_PRESS_AUX_SWITCH          0x0A
 
 
 // Note that for a Vishay TSOP4838 IR receiver module, all IR bursts should
@@ -958,6 +959,7 @@ const char * getDesc () // Note: Literals returned as const are in ROM
         case CMD_SET_BACKLIGHT_DELAY: return "Light Delay"; // Set delay = 0x01 to 0xFE (1 to 254 seconds)
         case CMD_SET_DEBUG_OFF:       return "Debug Off";
         case CMD_SET_DEBUG_ON:        return "Debug On";
+        case CMD_PRESS_AUX_SWITCH:    return "Aux Switch";
         default: return "";
       }
     default: return "";
@@ -1216,6 +1218,11 @@ void performLocalIRKFunction()
       RESET_SWITCH = ON;
       Delay_ms(250);
       RESET_SWITCH = OFF;
+      break;
+    case CMD_PRESS_AUX_SWITCH:
+      AUX_SWITCH = ON;
+      Delay_ms(250);
+      AUX_SWITCH = OFF;
       break;
     case CMD_INIT_USB:
       disableUSB();
