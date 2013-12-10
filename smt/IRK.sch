@@ -13777,6 +13777,12 @@ Source: &lt;a href="www.bourns.com/pdfs/bourns_trimpot_catalog.pdf"&gt;www.bourn
 <text x="3.545" y="-2.54" size="1.27" layer="27" font="vector" rot="R90">&gt;VALUE</text>
 <rectangle x1="-0.889" y1="-0.1905" x2="0.889" y2="0.1905" layer="51"/>
 <rectangle x1="-0.1905" y1="-0.889" x2="0.1905" y2="0.889" layer="51"/>
+<polygon width="0.4064" layer="41">
+<vertex x="-0.635" y="0.635"/>
+<vertex x="0.635" y="0.635"/>
+<vertex x="0.635" y="-0.635"/>
+<vertex x="-0.635" y="-0.635"/>
+</polygon>
 </package>
 <package name="TSOP18XX">
 <wire x1="-2.5012" y1="-2.0266" x2="-3.0012" y2="-0.0266" width="0.127" layer="21"/>
@@ -14008,7 +14014,7 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <pin name="3" x="5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="4" x="5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="2" x="-5.08" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="2"/>
-<wire x1="-2.54" y1="1.27" x2="2.54" y2="1.27" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="1.27" x2="2.54" y2="1.27" width="0.4064" layer="94"/>
 <rectangle x1="-1.27" y1="1.27" x2="1.27" y2="1.905" layer="94"/>
 </symbol>
 <symbol name="DIODE-SCHOTTKY">
@@ -14419,6 +14425,7 @@ Microminiature Tactile Switch for SMT</description>
 <text x="175.26" y="101.6" size="1.778" layer="91" rot="R90">AUX</text>
 <text x="119.38" y="-27.94" size="1.778" layer="97">AUX</text>
 <text x="48.26" y="-15.24" size="1.778" layer="97">Vstandby</text>
+<text x="205.74" y="121.92" size="1.778" layer="97">&gt;LAST_DATE_TIME</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="78.74" y="48.26"/>

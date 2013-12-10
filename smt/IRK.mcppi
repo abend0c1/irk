@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=IRK.c
+Value=USBdsc.c
 [USE_EEPROM]
 Value=0
 [EEPROM_DEFINITION]
@@ -25,9 +25,10 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=2
+Count=3
 File0=USBdsc.c
 File1=IRK.c
+File2=\\VBOXSVR\aja\git\hidrdd\samples\irk.h
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -35,13 +36,11 @@ Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Count=6
-Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\defs\
+Count=4
+Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\
 Path1=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\uses\P18\
 Path2=E:\_work\projects\irk\smt\
 Path3=E:\_work\projects\irk\
-Path4=D:\_work\projects\IRK\
-Path5=E:\_work\projects\IRK2\
 [HEADER_PATH]
 Count=0
 [HEADERS]
@@ -60,4 +59,5 @@ File6=EEPROM
 File7=Conversions
 [EXPANDED NODES]
 Node1=Sources
-Count=1
+Node2=Output Files
+Count=2

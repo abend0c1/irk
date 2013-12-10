@@ -457,12 +457,12 @@ typedef union
 } t_keyModifiers;
 
 // LCD module
-sbit LCD_D4 at RA0_bit;
-sbit LCD_D5 at RA1_bit;
-sbit LCD_D6 at RA2_bit;
-sbit LCD_D7 at RA3_bit;
-sbit LCD_RS at RA4_bit;
-sbit LCD_EN at RA5_bit;
+sbit LCD_D4 at LATA0_bit;
+sbit LCD_D5 at LATA1_bit;
+sbit LCD_D6 at LATA2_bit;
+sbit LCD_D7 at LATA3_bit;
+sbit LCD_RS at LATA4_bit;
+sbit LCD_EN at LATA5_bit;
 
 sbit LCD_D4_Direction at TRISA0_bit;
 sbit LCD_D5_Direction at TRISA1_bit;
@@ -470,7 +470,6 @@ sbit LCD_D6_Direction at TRISA2_bit;
 sbit LCD_D7_Direction at TRISA3_bit;
 sbit LCD_RS_Direction at TRISA4_bit;
 sbit LCD_EN_Direction at TRISA5_bit;
-
 
 // Buttons (weak pullups are enabled so they read high when not pressed)
 sbit TEACH_BUTTON            at RB0_bit;

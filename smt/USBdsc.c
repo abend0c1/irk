@@ -180,28 +180,26 @@ Keyboard Input Report (PIC --> Host) 4 bytes as follows:
     |                 Key                   | IN: Key that is currently pressed
     '---------------------------------------'
 */
-    0x05, 0x01,                    // G USAGE_PAGE (Generic Desktop)
-    0x09, 0x06,                    // L USAGE (Keyboard)
-    0xa1, 0x01,                    // M COLLECTION (Application)
-    0x85, REPORT_ID_KEYBOARD,      //   G REPORT_ID
-    0x05, 0x07,                    //   G USAGE_PAGE (Keyboard)
-    0x19, 0xe0,                    //   L USAGE_MINIMUM (Keyboard LeftControl)
-    0x29, 0xe7,                    //   L USAGE_MAXIMUM (Keyboard Right GUI)
-    0x15, 0x00,                    //   G LOGICAL_MINIMUM (0)
-    0x25, 0x01,                    //   G LOGICAL_MAXIMUM (1)
-    0x75, 0x01,                    //   G REPORT_SIZE (1)
-    0x95, 0x08,                    //   G REPORT_COUNT (8)
-    0x81, 0x02,                    //   M INPUT (Data,Var,Abs)
-
-    0x75, 0x08,                    //   G REPORT_SIZE (8)
-    0x95, 0x01,                    //   G REPORT_COUNT (1)
-    0x81, 0x03,                    //   M INPUT (Cnst,Var,Abs)
-
-    0x95, 0x01,                    //   G REPORT_COUNT (1)
-    0x26, 0xff, 0x00,              //   G LOGICAL_MAXIMUM (255)
-    0x19, 0x00,                    //   L USAGE_MINIMUM (Reserved (no event indicated))
-    0x2a, 0xff, 0x00,              //   L USAGE_MAXIMUM (255)
-    0x81, 0x00,                    //   M INPUT (Data,Ary,Abs)
+  0x05, 0x01,                  // (GLOBAL) USAGE_PAGE         0x0001 Generic Desktop Page
+  0x09, 0x06,                  // (LOCAL)  USAGE              0x00010006 Keyboard (CA=Application Collection)
+  0xA1, 0x01,                  // (MAIN)   COLLECTION         0x01 Application (Usage=0x00010006: Page=Generic Desktop Page, Usage=Keyboard, Type=CA)
+  0x85, REPORT_ID_KEYBOARD,    //   (GLOBAL) REPORT_ID          0x4B (75) 'K'
+  0x05, 0x07,                  //   (GLOBAL) USAGE_PAGE         0x0007 Keyboard/Keypad Page
+  0x19, 0xE0,                  //   (LOCAL)  USAGE_MINIMUM      0x000700E0 Keyboard Left Control (DV=Dynamic Value)
+  0x29, 0xE7,                  //   (LOCAL)  USAGE_MAXIMUM      0x000700E7 Keyboard Right GUI (DV=Dynamic Value)
+  0x15, 0x00,                  //   (GLOBAL) LOGICAL_MINIMUM    0x00 (0) <-- Redundant: LOGICAL_MINIMUM is already 0
+  0x25, 0x01,                  //   (GLOBAL) LOGICAL_MAXIMUM    0x01 (1)
+  0x75, 0x01,                  //   (GLOBAL) REPORT_SIZE        0x01 (1) Number of bits per field
+  0x95, 0x08,                  //   (GLOBAL) REPORT_COUNT       0x08 (8) Number of fields
+  0x81, 0x02,                  //   (MAIN)   INPUT              0x00000002 (8 fields x 1 bit) 0=Data 1=Variable 0=Absolute 0=NoWrap 0=Linear 0=PrefState 0=NoNull 0=NonVolatile 0=Bitmap
+  0x75, 0x08,                  //   (GLOBAL) REPORT_SIZE        0x08 (8) Number of bits per field
+  0x95, 0x01,                  //   (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields
+  0x81, 0x03,                  //   (MAIN)   INPUT              0x00000003 (1 field x 8 bits) 1=Constant 1=Variable 0=Absolute 0=NoWrap 0=Linear 0=PrefState 0=NoNull 0=NonVolatile 0=Bitmap
+  0x95, 0x01,                  //   (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields <-- Redundant: REPORT_COUNT is already 1
+  0x26, 0xFF, 0x00,            //   (GLOBAL) LOGICAL_MAXIMUM    0x00FF (255)
+  0x19, 0x00,                  //   (LOCAL)  USAGE_MINIMUM      0x00070000 Keyboard No event indicated (Sel=Selector) <-- Redundant: USAGE_MINIMUM is already 0x0000
+  0x2A, 0xFF, 0x00,            //   (LOCAL)  USAGE_MAXIMUM      0x000700FF
+  0x81, 0x00,                  //   (MAIN)   INPUT              0x00000000 (1 field x 8 bits) 0=Data 0=Array 0=Absolute 0=Ignored 0=Ignored 0=PrefState 0=NoNull
 /*
 Output Report (PIC <-- Host) 2 bytes as follows:
 
@@ -211,19 +209,17 @@ Output Report (PIC <-- Host) 2 bytes as follows:
     |    |    |    |    |    |SCRL|CAPL|NUML| OUT: NumLock,CapsLock,ScrollLock - and 5 unused pad bits
     '---------------------------------------'
 */
-    0x75, 0x01,                    //   G REPORT_SIZE (1)
-    0x95, 0x03,                    //   G REPORT_COUNT (3)
-    0x05, 0x08,                    //   G USAGE_PAGE (LEDs)
-    0x19, 0x01,                    //   L USAGE_MINIMUM (Num Lock)
-    0x29, 0x03,                    //   L USAGE_MAXIMUM (Scroll Lock)
-    0x25, 0x01,                    //   G LOGICAL_MAXIMUM (1)
-    0x91, 0x02,                    //   M OUTPUT (Data,Var,Abs)
-
-    0x75, 0x05,                    //   G REPORT_SIZE (5)
-    0x95, 0x01,                    //   G REPORT_COUNT (1)
-    0x91, 0x03,                    //   M OUTPUT (Cnst,Var,Abs)
-
-    0xc0,                          // M END_COLLECTION
+  0x75, 0x01,                  //   (GLOBAL) REPORT_SIZE        0x01 (1) Number of bits per field
+  0x95, 0x03,                  //   (GLOBAL) REPORT_COUNT       0x03 (3) Number of fields
+  0x05, 0x08,                  //   (GLOBAL) USAGE_PAGE         0x0008 LED Indicator Page
+  0x19, 0x01,                  //   (LOCAL)  USAGE_MINIMUM      0x00080001 Num Lock (OOC=On/Off Control)
+  0x29, 0x03,                  //   (LOCAL)  USAGE_MAXIMUM      0x00080003 Scroll Lock (OOC=On/Off Control)
+  0x25, 0x01,                  //   (GLOBAL) LOGICAL_MAXIMUM    0x01 (1)
+  0x91, 0x02,                  //   (MAIN)   OUTPUT             0x00000002 (3 fields x 1 bit) 0=Data 1=Variable 0=Absolute 0=NoWrap 0=Linear 0=PrefState 0=NoNull 0=NonVolatile 0=Bitmap
+  0x75, 0x05,                  //   (GLOBAL) REPORT_SIZE        0x05 (5) Number of bits per field
+  0x95, 0x01,                  //   (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields
+  0x91, 0x03,                  //   (MAIN)   OUTPUT             0x00000003 (1 field x 5 bits) 1=Constant 1=Variable 0=Absolute 0=NoWrap 0=Linear 0=PrefState 0=NoNull 0=NonVolatile 0=Bitmap
+  0xC0,                        // (MAIN)   END_COLLECTION     Application
 
 /*
 System Control Input Report (PIC --> Host) 2 bytes as follows:
@@ -233,18 +229,18 @@ System Control Input Report (PIC --> Host) 2 bytes as follows:
     |           Power Control Code          | IN: Power Off, Sleep, Power On
     '---------------------------------------'
 */
-    0x05, 0x01,                    // G USAGE_PAGE (Generic Desktop)
-    0x09, 0x80,                    // L USAGE (System Control)
-    0xa1, 0x01,                    // M COLLECTION (Application)
-    0x85, REPORT_ID_SYSTEM_CONTROL,//   G REPORT_ID
-    0x19, 0x00,                    //   L USAGE_MINIMUM (0x00)
-    0x2a, 0xFF, 0x00,              //   L USAGE_MAXIMUM (0xFF)
-    0x15, 0x00,                    //   G LOGICAL_MINIMUM (0x00)
-    0x26, 0xFF, 0x00,              //   G LOGICAL_MAXIMUM (0xFF)
-    0x75, 0x08,                    //   G REPORT_SIZE (8)
-    0x95, 0x01,                    //   G REPORT_COUNT (1)
-    0x81, 0x00,                    //   M INPUT (Data,Ary,Abs)
-    0xc0,                          // M END_COLLECTION
+  0x05, 0x01,                  // (GLOBAL) USAGE_PAGE         0x0001 Generic Desktop Page
+  0x09, 0x80,                  // (LOCAL)  USAGE              0x00010080 System Control (CA=Application Collection)
+  0xA1, 0x01,                  // (MAIN)   COLLECTION         0x01 Application (Usage=0x00010080: Page=Generic Desktop Page, Usage=System Control, Type=CA)
+  0x85, REPORT_ID_SYSTEM_CONTROL, //   (GLOBAL) REPORT_ID          0x53 (83) 'S'
+  0x19, 0x00,                  //   (LOCAL)  USAGE_MINIMUM      0x00010000 Undefined <-- Redundant: USAGE_MINIMUM is already 0x0000
+  0x2A, 0xFF, 0x00,            //   (LOCAL)  USAGE_MAXIMUM      0x000100FF
+  0x15, 0x00,                  //   (GLOBAL) LOGICAL_MINIMUM    0x00 (0) <-- Redundant: LOGICAL_MINIMUM is already 0
+  0x26, 0xFF, 0x00,            //   (GLOBAL) LOGICAL_MAXIMUM    0x00FF (255)
+  0x75, 0x08,                  //   (GLOBAL) REPORT_SIZE        0x08 (8) Number of bits per field
+  0x95, 0x01,                  //   (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields <-- Redundant: REPORT_COUNT is already 1
+  0x81, 0x00,                  //   (MAIN)   INPUT              0x00000000 (1 field x 8 bits) 0=Data 0=Array 0=Absolute 0=Ignored 0=Ignored 0=PrefState 0=NoNull
+  0xC0,                        // (MAIN)   END_COLLECTION     Application
 
 /*
 Consumer Device Input Report (PIC --> Host) 3 bytes as follows:
@@ -256,86 +252,20 @@ Consumer Device Input Report (PIC --> Host) 3 bytes as follows:
     |    Consumer Device Code (High byte)   | IN:
     '---------------------------------------'
 */
-    0x05, 0x0C,                    // G USAGE_PAGE (Consumer Devices)
-    0x09, 0x01,                    // L USAGE (Consumer Control)
-    0xa1, 0x01,                    // M COLLECTION (Application)
-    0x85, REPORT_ID_CONSUMER_DEVICE, //   G REPORT_ID
-    0x19, 0x00,                    //   L USAGE_MINIMUM (0)
-    0x2a, 0x3c, 0x02,              //   L USAGE_MAXIMUM (0x023C)
-    0x15, 0x00,                    //   G LOGICAL_MINIMUM (0)
-    0x26, 0x3c, 0x02,              //   G LOGICAL_MAXIMUM (0x023C)
-    0x75, 0x10,                    //   G REPORT_SIZE (16)
-    0x95, 0x01,                    //   G REPORT_COUNT (1)
-    0x81, 0x00,                    //   M INPUT (Data,Ary,Abs)
-    0xc0,                          // M END_COLLECTION
+  0x05, 0x0C,                  // (GLOBAL) USAGE_PAGE         0x000C Consumer Device Page
+  0x09, 0x01,                  // (LOCAL)  USAGE              0x000C0001 Consumer Control (CA=Application Collection)
+  0xA1, 0x01,                  // (MAIN)   COLLECTION         0x01 Application (Usage=0x000C0001: Page=Consumer Device Page, Usage=Consumer Control, Type=CA)
+  0x85, REPORT_ID_CONSUMER_DEVICE, // (GLOBAL) REPORT_ID          0x43 (67) 'C'
+  0x19, 0x00,                  //   (LOCAL)  USAGE_MINIMUM      0x000C0000 Unassigned <-- Redundant: USAGE_MINIMUM is already 0x0000
+  0x2A, 0x3C, 0x02,            //   (LOCAL)  USAGE_MAXIMUM      0x000C023C AC Format (Sel=Selector)
+  0x15, 0x00,                  //   (GLOBAL) LOGICAL_MINIMUM    0x00 (0) <-- Redundant: LOGICAL_MINIMUM is already 0
+  0x26, 0x3C, 0x02,            //   (GLOBAL) LOGICAL_MAXIMUM    0x023C (572)
+  0x75, 0x10,                  //   (GLOBAL) REPORT_SIZE        0x10 (16) Number of bits per field
+  0x95, 0x01,                  //   (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields <-- Redundant: REPORT_COUNT is already 1
+  0x81, 0x00,                  //   (MAIN)   INPUT              0x00000000 (1 field x 16 bits) 0=Data 0=Array 0=Absolute 0=Ignored 0=Ignored 0=PrefState 0=NoNull
+  0xC0,                        // (MAIN)   END_COLLECTION     Application
     }
   };
-
-/* 
-Trace captured from a Gigabyte GK-K7100 keyboard, which supports
-Keyboard (including boot keyboard), Power control functions, 
-and Consumer device control functions:
-
-05 01     G USAGE_PAGE (Generic Desktop)
-09 06     L USAGE (Keyboard)
-A1 01     M COLLECTION (Application)
-05 08       G USAGE_PAGE (LEDs)
-19 01       L USAGE_MINIMUM (Num Lock)
-29 03       L USAGE_MAXIMUM (Scroll Lock)
-15 00       G LOGICAL_MINIMUM (0)
-25 01       G LOGICAL_MAXIMUM (1)
-75 01       G REPORT_SIZE (1)
-95 03       G REPORT_COUNT (3)
-91 02       M OUTPUT (Data,Var,Abs)
-95 05       G REPORT_COUNT (5)
-91 01       G REPORT_COUNT (1)
-05 07       G USAGE_PAGE (Keyboard)
-19 E0       L USAGE_MINIMUM (Keyboard LeftControl)
-29 E7       L USAGE_MAXIMUM (Keyboard Right GUI)
-95 08       G REPORT_COUNT (8)
-81 02       M INPUT (Data,Var,Abs)
-75 08       G REPORT_SIZE (8)
-95 01       G REPORT_COUNT (1)
-81 01       M INPUT (Cnst,Ary,Abs)
-19 00       L USAGE_MINIMUM (Reserved (no event indicated))
-29 91       L USAGE_MAXIMUM ()
-26 FF 00    G LOGICAL_MAXIMUM (255)
-95 06       G REPORT_COUNT (6)
-81 00       M INPUT (Data,Ary,Abs)
-C0        M END_COLLECTION
-
-
-05 01     G USAGE_PAGE (Generic Desktop)
-09 80     L USAGE (System Control)
-A1 01     M COLLECTION (Application)
-85 02       G REPORT_ID (0x02)
-19 81       L USAGE_MINIMUM (Power Down)
-29 83       L USAGE_MAXIMUM (Wake)
-15 00       G LOGICAL_MINIMUM (0)
-25 01       G LOGICAL_MAXIMUM (1)
-75 01       G REPORT_SIZE (1)
-95 03       G REPORT_COUNT (3)
-81 02       M INPUT (Data,Var,Abs)
-95 05       G REPORT_COUNT (5)
-81 01       M INPUT (Cnst,Ary,Abs)
-C0        M END_COLLECTION
-
-05 0C     G USAGE_PAGE (Consumer Devices)
-09 01     L USAGE (Consumer Control)
-A1 01     M COLLECTION (Application)
-85 01       G REPORT_ID (0x01)
-19 00       L USAGE_MINIMUM (Reserved (no event indicated))
-2A 3C 02    L USAGE_MAXIMUM (0x023C)
-15 00       G LOGICAL_MINIMUM (0)
-26 3C 02    G LOGICAL_MAXIMUM (0x023C)
-95 01       G REPORT_COUNT (1)
-75 10       G REPORT_SIZE (16)
-81 00       M INPUT (Data,Ary,Abs)
-C0        M END_COLLECTION
-
-*/
-
-
 
 
 //Language code string descriptor
