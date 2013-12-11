@@ -5,22 +5,11 @@ Control your computer with an IR remote
 
 IRK! is an open-hardware Infrared Remote Controlled USB keyboard, without keys, implemented using a PIC micro-controller and MikroC. It enables you to use your *learning* remote control to control any system that you can plug a USB keyboard into (Windows, Linux, Mac). Great for controlling a home theatre system such as MythTV, XBMC or Media Center. No drivers are required.
 
-Note: Your IR remote *must* be able to *learn*
-           infrared control signals. You *cannot* use a pre-programmed remote
-           control with IRK!.
+Note: Your IR remote *must* be able to *learn* infrared control signals. You *cannot* use a pre-programmed remote control with IRK!.
 
-The original intention was to allow a user to control MythTV home
-theatre software using an infrared remote control. As it
-is seen by a PC as just another USB keyboard it can be used
-to control other PC functions as well.
+The original intention was to allow a user to control MythTV home theatre software using an infrared remote control. As it is seen by a PC as just another USB keyboard it can be used to control other PC functions as well.
 
-What makes this unit different from the rest is that it can *teach*
-a learning remote control the IR code associated with a particular
-USB keystroke. As a result, there are *no* pre-programmed IR codes and
-IRK! does *not* have to support all the different types of infrared
-remotes on the market - it *teaches* the remote IRK!'s own infrared
-commands - which can be anything! Currently, IRK! uses Pulse Width
-Modulation (PWM) to encode/decode the infrared signals.
+What makes this unit different from the rest is that it can *teach* a learning remote control the IR code associated with a particular USB keystroke. As a result, there are *no* pre-programmed IR codes and IRK! does *not* have to support all the different types of infrared remotes on the market - it *teaches* the remote IRK!'s own infrared commands - which can be anything! Currently, IRK! uses Pulse Width Modulation (PWM) to encode/decode the infrared signals.
 
 You can program -any- USB keyboard function (with or without Control, Alt, Shift and GUI modifiers) to a button on your infrared remote control and when you press that button IRK! will send the corresponding USB keystroke to the host computer.
 
@@ -183,18 +172,18 @@ Examples
 --------            
 1. The user wants to program the Enter key on the OK button of a
    learning remote control. The steps to follow are:
-  - Plug IRK! into a host USB port
-  - The default usage mode is Keyboard, which is displayed as
+    - Plug IRK! into a host USB port
+    - The default usage mode is Keyboard, which is displayed as
     "00 Keyboard" in the first line of the LCD, so just
     press and hold the UP button until the second line of the LCD
     shows "28 Enter".
-  - Switch your learning remote control into "Learn" mode and
+    - Switch your learning remote control into "Learn" mode and
     select the remote's button to be programmed.
-  - Press IRK!'s TEACH button. This will send an IR code that
+    - Press IRK!'s TEACH button. This will send an IR code that
     means "Enter" to your learning remote.
-  - Repeat until the learning remote has learned that IR code.
-  - Press the programmed button on the learning remote control.
-  - Verify that IRK! has received the IR code (it will flash
+    - Repeat until the learning remote has learned that IR code.
+    - Press the programmed button on the learning remote control.
+    - Verify that IRK! has received the IR code (it will flash
     its LED when it has recognised a valid IR code). Verify 
     that the "Enter" USB Keyboard function has been performed
     at the host.
@@ -203,26 +192,26 @@ Examples
    on the "Mute" button of a learning remote control. The default
    usage mode of IRK! is "Keyboard", so you need to switch IRK! into
    "Consumer Dev" mode first:
-  - Press and hold IRK!'s SHIFT button until the second line of
+    - Press and hold IRK!'s SHIFT button until the second line of
     the LCD shows "^^ Select Usage".
-  - Press IRK!'s UP button until "20 Consumer Dev" is displayed in
+    - Press IRK!'s UP button until "20 Consumer Dev" is displayed in
     the first line of the LCD.
-  - Press IRK!'s OK button to enter "Consumer Dev" usage mode.
-  - Press and hold IRK!'s UP button until "E2 Mute" is displayed
+    - Press IRK!'s OK button to enter "Consumer Dev" usage mode.
+    - Press and hold IRK!'s UP button until "E2 Mute" is displayed
     on the second line of the LCD. If you overshoot then press the
     DOWN button repeatedly until you reach "E2 Mute".
-  - Press OK to verify that the Mute function is accepted by the
+    - Press OK to verify that the Mute function is accepted by the
     host.
-  - Put your learning remote control into "Learn" mode and choose
+    - Put your learning remote control into "Learn" mode and choose
     one of the remote's buttons to be programmed as "Mute".
-  - Position your learning remote's IR receiver to within 5 cm of
+    - Position your learning remote's IR receiver to within 5 cm of
     IRK!'s IR transmitter LED.
-  - Press IRK!'s TEACH button. This will send an IR code that 
+    - Press IRK!'s TEACH button. This will send an IR code that 
     means "Mute" to your learning remote.
-  - Keep pressing TEACH until the learning remote has learned that
+    - Keep pressing TEACH until the learning remote has learned that
     IR code.
-  - Press the programmed button on the learning remote control.
-  - Verify that IRK! has received the IR code (it will flash
+    - Press the programmed button on the learning remote control.
+    - Verify that IRK! has received the IR code (it will flash
     its LED when it has recognised a valid IR code). Verify 
     that the "Mute" USB consumer device function has been performed
     at the host.
