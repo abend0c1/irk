@@ -55,7 +55,7 @@
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
-<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
 <layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
@@ -109,258 +109,6 @@
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <libraries>
-<library name="microchip">
-<packages>
-<package name="DIL28-3">
-<description>&lt;B&gt;Dual In Line&lt;/B&gt;&lt;p&gt;
-package type P</description>
-<wire x1="-17.78" y1="-1.27" x2="-17.78" y2="-2.54" width="0.1524" layer="21"/>
-<wire x1="-17.78" y1="1.27" x2="-17.78" y2="-1.27" width="0.1524" layer="21" curve="-180"/>
-<wire x1="17.78" y1="-2.54" x2="17.78" y2="2.54" width="0.1524" layer="21"/>
-<wire x1="-17.78" y1="2.54" x2="-17.78" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="-17.78" y1="2.54" x2="17.78" y2="2.54" width="0.1524" layer="21"/>
-<wire x1="-17.653" y1="-2.54" x2="17.78" y2="-2.54" width="0.1524" layer="21"/>
-<pad name="1" x="-16.51" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="2" x="-13.97" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="3" x="-11.43" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="4" x="-8.89" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="5" x="-6.35" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="6" x="-3.81" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="7" x="-1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="8" x="1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="9" x="3.81" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="10" x="6.35" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="11" x="8.89" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="12" x="11.43" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="13" x="13.97" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="14" x="16.51" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="15" x="16.51" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="16" x="13.97" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="17" x="11.43" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="18" x="8.89" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="19" x="6.35" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="20" x="3.81" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="21" x="1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="22" x="-1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="23" x="-3.81" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="24" x="-6.35" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="25" x="-8.89" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="26" x="-11.43" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="27" x="-13.97" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<pad name="28" x="-16.51" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<text x="-17.907" y="-2.54" size="1.778" layer="25" ratio="10" rot="R90">&gt;NAME</text>
-<text x="-15.748" y="-0.9398" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
-</package>
-<package name="SO28W">
-<description>&lt;B&gt;28-Lead Plastic Small Outline (SO) &lt;/B&gt; Wide, 300 mil Body (SOIC)&lt;/B&gt;&lt;p&gt;
-Source: http://ww1.microchip.com/downloads/en/devicedoc/39632c.pdf</description>
-<wire x1="-8.1788" y1="-3.7132" x2="9.4742" y2="-3.7132" width="0.1524" layer="21"/>
-<wire x1="9.4742" y1="-3.7132" x2="9.4742" y2="3.7132" width="0.1524" layer="21"/>
-<wire x1="9.4742" y1="3.7132" x2="-8.1788" y2="3.7132" width="0.1524" layer="21"/>
-<wire x1="-8.1788" y1="3.7132" x2="-8.1788" y2="-3.7132" width="0.1524" layer="21"/>
-<circle x="-7.239" y="-3.1496" radius="0.5334" width="0.1524" layer="21"/>
-<smd name="1" x="-7.62" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="2" x="-6.35" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="3" x="-5.08" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="4" x="-3.81" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="5" x="-2.54" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="6" x="-1.27" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="7" x="0" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="8" x="1.27" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="9" x="2.54" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="10" x="3.81" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="20" x="2.54" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="19" x="3.81" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="18" x="5.08" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="17" x="6.35" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="16" x="7.62" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="15" x="8.89" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="14" x="8.89" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="13" x="7.62" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="12" x="6.35" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="11" x="5.08" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="21" x="1.27" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="22" x="0" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="23" x="-1.27" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="24" x="-2.54" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="25" x="-3.81" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="26" x="-5.08" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="27" x="-6.35" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<smd name="28" x="-7.62" y="4.78" dx="0.65" dy="1.7" layer="1"/>
-<text x="-8.509" y="-4.064" size="1.778" layer="25" ratio="10" rot="R90">&gt;NAME</text>
-<text x="11.557" y="-4.064" size="1.778" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
-<rectangle x1="-7.874" y1="-5.2626" x2="-7.366" y2="-3.7386" layer="51"/>
-<rectangle x1="-6.604" y1="-5.2626" x2="-6.096" y2="-3.7386" layer="51"/>
-<rectangle x1="-5.334" y1="-5.2626" x2="-4.826" y2="-3.7386" layer="51"/>
-<rectangle x1="-4.064" y1="-5.2626" x2="-3.556" y2="-3.7386" layer="51"/>
-<rectangle x1="-2.794" y1="-5.2626" x2="-2.286" y2="-3.7386" layer="51"/>
-<rectangle x1="-1.524" y1="-5.2626" x2="-1.016" y2="-3.7386" layer="51"/>
-<rectangle x1="-0.254" y1="-5.2626" x2="0.254" y2="-3.7386" layer="51"/>
-<rectangle x1="1.016" y1="-5.2626" x2="1.524" y2="-3.7386" layer="51"/>
-<rectangle x1="2.286" y1="-5.2626" x2="2.794" y2="-3.7386" layer="51"/>
-<rectangle x1="3.556" y1="-5.2626" x2="4.064" y2="-3.7386" layer="51"/>
-<rectangle x1="4.826" y1="-5.2626" x2="5.334" y2="-3.7386" layer="51"/>
-<rectangle x1="6.096" y1="-5.2626" x2="6.604" y2="-3.7386" layer="51"/>
-<rectangle x1="7.366" y1="-5.2626" x2="7.874" y2="-3.7386" layer="51"/>
-<rectangle x1="8.636" y1="-5.2626" x2="9.144" y2="-3.7386" layer="51"/>
-<rectangle x1="8.636" y1="3.7386" x2="9.144" y2="5.2626" layer="51"/>
-<rectangle x1="7.366" y1="3.7386" x2="7.874" y2="5.2626" layer="51"/>
-<rectangle x1="6.096" y1="3.7386" x2="6.604" y2="5.2626" layer="51"/>
-<rectangle x1="4.826" y1="3.7386" x2="5.334" y2="5.2626" layer="51"/>
-<rectangle x1="3.556" y1="3.7386" x2="4.064" y2="5.2626" layer="51"/>
-<rectangle x1="2.286" y1="3.7386" x2="2.794" y2="5.2626" layer="51"/>
-<rectangle x1="1.016" y1="3.7386" x2="1.524" y2="5.2626" layer="51"/>
-<rectangle x1="-0.254" y1="3.7386" x2="0.254" y2="5.2626" layer="51"/>
-<rectangle x1="-1.524" y1="3.7386" x2="-1.016" y2="5.2626" layer="51"/>
-<rectangle x1="-2.794" y1="3.7386" x2="-2.286" y2="5.2626" layer="51"/>
-<rectangle x1="-4.064" y1="3.7386" x2="-3.556" y2="5.2626" layer="51"/>
-<rectangle x1="-5.334" y1="3.7386" x2="-4.826" y2="5.2626" layer="51"/>
-<rectangle x1="-6.604" y1="3.7386" x2="-6.096" y2="5.2626" layer="51"/>
-<rectangle x1="-7.874" y1="3.7386" x2="-7.366" y2="5.2626" layer="51"/>
-</package>
-</packages>
-<symbols>
-<symbol name="PIC18F4455_28">
-<wire x1="-35.56" y1="17.78" x2="35.56" y2="17.78" width="0.254" layer="94"/>
-<wire x1="35.56" y1="17.78" x2="35.56" y2="-20.32" width="0.254" layer="94"/>
-<wire x1="35.56" y1="-20.32" x2="-35.56" y2="-20.32" width="0.254" layer="94"/>
-<wire x1="-35.56" y1="-20.32" x2="-35.56" y2="17.78" width="0.254" layer="94"/>
-<text x="-35.56" y="19.05" size="1.778" layer="95">&gt;NAME</text>
-<text x="-35.56" y="-22.86" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="RC7/RX/DT/SDO" x="38.1" y="-10.16" length="short" rot="R180"/>
-<pin name="VSS" x="-38.1" y="-2.54" length="short" direction="pwr"/>
-<pin name="VDD" x="38.1" y="-5.08" length="short" direction="pwr" rot="R180"/>
-<pin name="RB0/AN12/INT0/LFT0/SDI/SDA" x="38.1" y="-2.54" length="short" rot="R180"/>
-<pin name="RB1/AN10/INT1/SCK/SCL" x="38.1" y="0" length="short" rot="R180"/>
-<pin name="RB2/AN8/INT2/VMO" x="38.1" y="2.54" length="short" rot="R180"/>
-<pin name="RB3/AN9/CCP2/VPO" x="38.1" y="5.08" length="short" rot="R180"/>
-<pin name="RB4/AN11/KBI0/CSSPP" x="38.1" y="7.62" length="short" rot="R180"/>
-<pin name="RB5/KBI1/PGM" x="38.1" y="10.16" length="short" rot="R180"/>
-<pin name="RB6/KBI2/PGC" x="38.1" y="12.7" length="short" rot="R180"/>
-<pin name="RB7/BKI3/PGD" x="38.1" y="15.24" length="short" rot="R180"/>
-<pin name="!MCLR!/VPP/RE3" x="-38.1" y="15.24" length="short" direction="in"/>
-<pin name="RA0/AN0" x="-38.1" y="12.7" length="short"/>
-<pin name="RA1/AN1" x="-38.1" y="10.16" length="short"/>
-<pin name="RA2/AN2/VREF-/CVREF" x="-38.1" y="7.62" length="short"/>
-<pin name="RA3/AN3/VREF+" x="-38.1" y="5.08" length="short"/>
-<pin name="RA4/T0CKI/CIOUT/RCV" x="-38.1" y="2.54" length="short"/>
-<pin name="RA5/AN4/!SS!/HLVDIN/C2OUT" x="-38.1" y="0" length="short"/>
-<pin name="VSS@1" x="38.1" y="-7.62" length="short" direction="pwr" rot="R180"/>
-<pin name="OSC1/CLKI" x="-38.1" y="-5.08" length="short" direction="in"/>
-<pin name="RA6/OSC2/CLKO" x="-38.1" y="-7.62" length="short" direction="out"/>
-<pin name="RC0/TIOSO/T13CKI" x="-38.1" y="-10.16" length="short"/>
-<pin name="RC1/T1OSI/ICCP2/!UOE" x="-38.1" y="-12.7" length="short"/>
-<pin name="RC2/CCP1/P1A" x="-38.1" y="-15.24" length="short"/>
-<pin name="VUSB" x="-38.1" y="-17.78" length="short"/>
-<pin name="RC4/D-/VM" x="38.1" y="-17.78" length="short" rot="R180"/>
-<pin name="RC5/D+/VP" x="38.1" y="-15.24" length="short" rot="R180"/>
-<pin name="RC6/TX/CK" x="38.1" y="-12.7" length="short" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="PIC18F2*_28" prefix="IC">
-<description>&lt;b&gt;USB Microcontrollers with nanoWatt Technology&lt;/b&gt; High-Performance, Enhanced Flash, 28/40/44-Pin, &lt;p&gt;
-Source: http://ww1.microchip.com/downloads/en/devicedoc/39632c.pdf</description>
-<gates>
-<gate name="G$1" symbol="PIC18F4455_28" x="0" y="0"/>
-</gates>
-<devices>
-<device name="DIP" package="DIL28-3">
-<connects>
-<connect gate="G$1" pin="!MCLR!/VPP/RE3" pad="1"/>
-<connect gate="G$1" pin="OSC1/CLKI" pad="9"/>
-<connect gate="G$1" pin="RA0/AN0" pad="2"/>
-<connect gate="G$1" pin="RA1/AN1" pad="3"/>
-<connect gate="G$1" pin="RA2/AN2/VREF-/CVREF" pad="4"/>
-<connect gate="G$1" pin="RA3/AN3/VREF+" pad="5"/>
-<connect gate="G$1" pin="RA4/T0CKI/CIOUT/RCV" pad="6"/>
-<connect gate="G$1" pin="RA5/AN4/!SS!/HLVDIN/C2OUT" pad="7"/>
-<connect gate="G$1" pin="RA6/OSC2/CLKO" pad="10"/>
-<connect gate="G$1" pin="RB0/AN12/INT0/LFT0/SDI/SDA" pad="21"/>
-<connect gate="G$1" pin="RB1/AN10/INT1/SCK/SCL" pad="22"/>
-<connect gate="G$1" pin="RB2/AN8/INT2/VMO" pad="23"/>
-<connect gate="G$1" pin="RB3/AN9/CCP2/VPO" pad="24"/>
-<connect gate="G$1" pin="RB4/AN11/KBI0/CSSPP" pad="25"/>
-<connect gate="G$1" pin="RB5/KBI1/PGM" pad="26"/>
-<connect gate="G$1" pin="RB6/KBI2/PGC" pad="27"/>
-<connect gate="G$1" pin="RB7/BKI3/PGD" pad="28"/>
-<connect gate="G$1" pin="RC0/TIOSO/T13CKI" pad="11"/>
-<connect gate="G$1" pin="RC1/T1OSI/ICCP2/!UOE" pad="12"/>
-<connect gate="G$1" pin="RC2/CCP1/P1A" pad="13"/>
-<connect gate="G$1" pin="RC4/D-/VM" pad="15"/>
-<connect gate="G$1" pin="RC5/D+/VP" pad="16"/>
-<connect gate="G$1" pin="RC6/TX/CK" pad="17"/>
-<connect gate="G$1" pin="RC7/RX/DT/SDO" pad="18"/>
-<connect gate="G$1" pin="VDD" pad="20"/>
-<connect gate="G$1" pin="VSS" pad="8"/>
-<connect gate="G$1" pin="VSS@1" pad="19"/>
-<connect gate="G$1" pin="VUSB" pad="14"/>
-</connects>
-<technologies>
-<technology name="455">
-<attribute name="MF" value="MICROCHIP" constant="no"/>
-<attribute name="MPN" value="PIC18F2455-I/SP" constant="no"/>
-<attribute name="OC_FARNELL" value="1579600" constant="no"/>
-<attribute name="OC_NEWARK" value="01M8485" constant="no"/>
-</technology>
-<technology name="550">
-<attribute name="MF" value="MICROCHIP" constant="no"/>
-<attribute name="MPN" value="PIC18F2550-I/SP" constant="no"/>
-<attribute name="OC_FARNELL" value="1523822" constant="no"/>
-<attribute name="OC_NEWARK" value="80K6054" constant="no"/>
-</technology>
-</technologies>
-</device>
-<device name="W" package="SO28W">
-<connects>
-<connect gate="G$1" pin="!MCLR!/VPP/RE3" pad="1"/>
-<connect gate="G$1" pin="OSC1/CLKI" pad="9"/>
-<connect gate="G$1" pin="RA0/AN0" pad="2"/>
-<connect gate="G$1" pin="RA1/AN1" pad="3"/>
-<connect gate="G$1" pin="RA2/AN2/VREF-/CVREF" pad="4"/>
-<connect gate="G$1" pin="RA3/AN3/VREF+" pad="5"/>
-<connect gate="G$1" pin="RA4/T0CKI/CIOUT/RCV" pad="6"/>
-<connect gate="G$1" pin="RA5/AN4/!SS!/HLVDIN/C2OUT" pad="7"/>
-<connect gate="G$1" pin="RA6/OSC2/CLKO" pad="10"/>
-<connect gate="G$1" pin="RB0/AN12/INT0/LFT0/SDI/SDA" pad="21"/>
-<connect gate="G$1" pin="RB1/AN10/INT1/SCK/SCL" pad="22"/>
-<connect gate="G$1" pin="RB2/AN8/INT2/VMO" pad="23"/>
-<connect gate="G$1" pin="RB3/AN9/CCP2/VPO" pad="24"/>
-<connect gate="G$1" pin="RB4/AN11/KBI0/CSSPP" pad="25"/>
-<connect gate="G$1" pin="RB5/KBI1/PGM" pad="26"/>
-<connect gate="G$1" pin="RB6/KBI2/PGC" pad="27"/>
-<connect gate="G$1" pin="RB7/BKI3/PGD" pad="28"/>
-<connect gate="G$1" pin="RC0/TIOSO/T13CKI" pad="11"/>
-<connect gate="G$1" pin="RC1/T1OSI/ICCP2/!UOE" pad="12"/>
-<connect gate="G$1" pin="RC2/CCP1/P1A" pad="13"/>
-<connect gate="G$1" pin="RC4/D-/VM" pad="15"/>
-<connect gate="G$1" pin="RC5/D+/VP" pad="16"/>
-<connect gate="G$1" pin="RC6/TX/CK" pad="17"/>
-<connect gate="G$1" pin="RC7/RX/DT/SDO" pad="18"/>
-<connect gate="G$1" pin="VDD" pad="20"/>
-<connect gate="G$1" pin="VSS" pad="8"/>
-<connect gate="G$1" pin="VSS@1" pad="19"/>
-<connect gate="G$1" pin="VUSB" pad="14"/>
-</connects>
-<technologies>
-<technology name="455">
-<attribute name="MF" value="MICROCHIP" constant="no"/>
-<attribute name="MPN" value="PIC18F2455-I/SO" constant="no"/>
-<attribute name="OC_FARNELL" value="1579598" constant="no"/>
-<attribute name="OC_NEWARK" value="64J3768" constant="no"/>
-</technology>
-<technology name="550">
-<attribute name="MF" value="MICROCHIP" constant="no"/>
-<attribute name="MPN" value="PIC18F2550-I/SO" constant="no"/>
-<attribute name="OC_FARNELL" value="9321268" constant="no"/>
-<attribute name="OC_NEWARK" value="73K1297" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="supply1">
 <packages>
 </packages>
@@ -13797,8 +13545,8 @@ Source: &lt;a href="www.bourns.com/pdfs/bourns_trimpot_catalog.pdf"&gt;www.bourn
 <pad name="GND" x="-0.0012" y="-0.0266" drill="0.8128" shape="long" rot="R90"/>
 <pad name="VCC" x="2.4988" y="-0.0266" drill="0.8128" shape="long" rot="R90"/>
 <pad name="OUT" x="-2.5012" y="-0.0266" drill="0.8128" shape="long" rot="R90"/>
-<text x="-3.81" y="2.54" size="1.27" layer="21">&gt;NAME</text>
-<text x="-3.81" y="4.445" size="1.27" layer="21">&gt;VALUE</text>
+<text x="-3.81" y="2.54" size="1.27" layer="25">&gt;NAME</text>
+<text x="-3.81" y="4.445" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="PTH525-SM10">
 <description>&lt;b&gt;C&amp;K Switches - PTS 525 Series&lt;/b&gt; Microminiature Tact Switch for SMT
@@ -13880,6 +13628,73 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <text x="-1.5875" y="2.2225" size="1.27" layer="25" font="vector">&gt;NAME</text>
 <text x="-1.905" y="-3.4925" size="1.27" layer="27" font="vector">&gt;VALUE</text>
 <rectangle x1="0.55" y1="0.6" x2="1.55" y2="0.85" layer="21"/>
+</package>
+<package name="SO28W">
+<description>&lt;B&gt;28-Lead Plastic Small Outline (SO) &lt;/B&gt; Wide, 300 mil Body (SOIC)&lt;/B&gt;&lt;p&gt;
+Source: http://ww1.microchip.com/downloads/en/devicedoc/39632c.pdf</description>
+<wire x1="-8.1788" y1="-3.7132" x2="9.4742" y2="-3.7132" width="0.1524" layer="21"/>
+<wire x1="9.4742" y1="-3.7132" x2="9.4742" y2="3.7132" width="0.1524" layer="21"/>
+<wire x1="9.4742" y1="3.7132" x2="-8.1788" y2="3.7132" width="0.1524" layer="21"/>
+<wire x1="-8.1788" y1="3.7132" x2="-8.1788" y2="-3.7132" width="0.1524" layer="21"/>
+<circle x="-7.239" y="-3.1496" radius="0.5334" width="0.1524" layer="21"/>
+<smd name="1" x="-7.62" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="2" x="-6.35" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="3" x="-5.08" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="4" x="-3.81" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="5" x="-2.54" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="6" x="-1.27" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="7" x="0" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="8" x="1.27" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="9" x="2.54" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="10" x="3.81" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="20" x="2.54" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="19" x="3.81" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="18" x="5.08" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="17" x="6.35" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="16" x="7.62" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="15" x="8.89" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="14" x="8.89" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="13" x="7.62" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="12" x="6.35" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="11" x="5.08" y="-4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="21" x="1.27" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="22" x="0" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="23" x="-1.27" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="24" x="-2.54" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="25" x="-3.81" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="26" x="-5.08" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="27" x="-6.35" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<smd name="28" x="-7.62" y="4.78" dx="0.65" dy="1.7" layer="1"/>
+<text x="-8.509" y="-4.064" size="1.778" layer="25" ratio="10" rot="R90">&gt;NAME</text>
+<text x="11.557" y="-4.064" size="1.778" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<rectangle x1="-7.874" y1="-5.2626" x2="-7.366" y2="-3.7386" layer="51"/>
+<rectangle x1="-6.604" y1="-5.2626" x2="-6.096" y2="-3.7386" layer="51"/>
+<rectangle x1="-5.334" y1="-5.2626" x2="-4.826" y2="-3.7386" layer="51"/>
+<rectangle x1="-4.064" y1="-5.2626" x2="-3.556" y2="-3.7386" layer="51"/>
+<rectangle x1="-2.794" y1="-5.2626" x2="-2.286" y2="-3.7386" layer="51"/>
+<rectangle x1="-1.524" y1="-5.2626" x2="-1.016" y2="-3.7386" layer="51"/>
+<rectangle x1="-0.254" y1="-5.2626" x2="0.254" y2="-3.7386" layer="51"/>
+<rectangle x1="1.016" y1="-5.2626" x2="1.524" y2="-3.7386" layer="51"/>
+<rectangle x1="2.286" y1="-5.2626" x2="2.794" y2="-3.7386" layer="51"/>
+<rectangle x1="3.556" y1="-5.2626" x2="4.064" y2="-3.7386" layer="51"/>
+<rectangle x1="4.826" y1="-5.2626" x2="5.334" y2="-3.7386" layer="51"/>
+<rectangle x1="6.096" y1="-5.2626" x2="6.604" y2="-3.7386" layer="51"/>
+<rectangle x1="7.366" y1="-5.2626" x2="7.874" y2="-3.7386" layer="51"/>
+<rectangle x1="8.636" y1="-5.2626" x2="9.144" y2="-3.7386" layer="51"/>
+<rectangle x1="8.636" y1="3.7386" x2="9.144" y2="5.2626" layer="51"/>
+<rectangle x1="7.366" y1="3.7386" x2="7.874" y2="5.2626" layer="51"/>
+<rectangle x1="6.096" y1="3.7386" x2="6.604" y2="5.2626" layer="51"/>
+<rectangle x1="4.826" y1="3.7386" x2="5.334" y2="5.2626" layer="51"/>
+<rectangle x1="3.556" y1="3.7386" x2="4.064" y2="5.2626" layer="51"/>
+<rectangle x1="2.286" y1="3.7386" x2="2.794" y2="5.2626" layer="51"/>
+<rectangle x1="1.016" y1="3.7386" x2="1.524" y2="5.2626" layer="51"/>
+<rectangle x1="-0.254" y1="3.7386" x2="0.254" y2="5.2626" layer="51"/>
+<rectangle x1="-1.524" y1="3.7386" x2="-1.016" y2="5.2626" layer="51"/>
+<rectangle x1="-2.794" y1="3.7386" x2="-2.286" y2="5.2626" layer="51"/>
+<rectangle x1="-4.064" y1="3.7386" x2="-3.556" y2="5.2626" layer="51"/>
+<rectangle x1="-5.334" y1="3.7386" x2="-4.826" y2="5.2626" layer="51"/>
+<rectangle x1="-6.604" y1="3.7386" x2="-6.096" y2="5.2626" layer="51"/>
+<rectangle x1="-7.874" y1="3.7386" x2="-7.366" y2="5.2626" layer="51"/>
 </package>
 </packages>
 <symbols>
@@ -14077,6 +13892,45 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <wire x1="-7.62" y1="-0.508" x2="-6.35" y2="-1.016" width="0.254" layer="94"/>
 <wire x1="-7.239" y1="-0.127" x2="-8.382" y2="1.016" width="0.254" layer="94"/>
 <text x="-3.302" y="8.382" size="1.778" layer="96">&gt;NAME</text>
+</symbol>
+<symbol name="PIC18F25K50">
+<description>&lt;h1&gt;PIC18(L)F2X/45K50&lt;/h1&gt;
+&lt;h2&gt;28/40/44-Pin, Low-Power, High-Performance
+Microcontrollers with XLP Technology&lt;/h2&gt;</description>
+<wire x1="15.24" y1="-17.78" x2="-17.78" y2="-17.78" width="0.4064" layer="94"/>
+<wire x1="-17.78" y1="-17.78" x2="-17.78" y2="20.32" width="0.4064" layer="94"/>
+<wire x1="-17.78" y1="20.32" x2="15.24" y2="20.32" width="0.4064" layer="94"/>
+<wire x1="15.24" y1="20.32" x2="15.24" y2="-17.78" width="0.4064" layer="94"/>
+<text x="-17.78" y="21.59" size="1.778" layer="95">&gt;NAME</text>
+<text x="-17.78" y="-20.32" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="RX/RC7" x="17.78" y="-7.62" length="short" rot="R180"/>
+<pin name="RA2/AN2" x="-20.32" y="10.16" length="short"/>
+<pin name="RA3/AN3" x="-20.32" y="7.62" length="short"/>
+<pin name="RA4" x="-20.32" y="5.08" length="short"/>
+<pin name="TX/RC6" x="17.78" y="-10.16" length="short" rot="R180"/>
+<pin name="D+/RC5" x="17.78" y="-12.7" length="short" rot="R180"/>
+<pin name="INT0/AN12/RB0" x="17.78" y="0" length="short" rot="R180"/>
+<pin name="D-/RC4" x="17.78" y="-15.24" length="short" rot="R180"/>
+<pin name="AN11/RB4" x="17.78" y="10.16" length="short" rot="R180"/>
+<pin name="PGM/AN13/RB5" x="17.78" y="12.7" length="short" rot="R180"/>
+<pin name="PGC/RB6" x="17.78" y="15.24" length="short" rot="R180"/>
+<pin name="PGD/RB7" x="17.78" y="17.78" length="short" rot="R180"/>
+<pin name="VSS" x="-20.32" y="0" length="short" direction="pwr"/>
+<pin name="VSS@19" x="17.78" y="-5.08" length="short" direction="pwr" rot="R180"/>
+<pin name="INT2/AN8/RB2" x="17.78" y="5.08" length="short" rot="R180"/>
+<pin name="INT1/AN10/RB1" x="17.78" y="2.54" length="short" rot="R180"/>
+<pin name="RA6" x="-20.32" y="-5.08" length="short" direction="out"/>
+<pin name="RA7" x="-20.32" y="-2.54" length="short" direction="in"/>
+<pin name="RA0/AN0" x="-20.32" y="15.24" length="short"/>
+<pin name="RA1/AN1" x="-20.32" y="12.7" length="short"/>
+<pin name="RA5/AN4" x="-20.32" y="2.54" length="short"/>
+<pin name="RE3/MCLR/VPP" x="-20.32" y="17.78" length="short"/>
+<pin name="AN9/RB3" x="17.78" y="7.62" length="short" rot="R180"/>
+<pin name="VDD" x="17.78" y="-2.54" length="short" direction="pwr" rot="R180"/>
+<pin name="RC1" x="-20.32" y="-10.16" length="short"/>
+<pin name="RC2" x="-20.32" y="-12.7" length="short"/>
+<pin name="V-USB" x="-20.32" y="-15.24" length="short"/>
+<pin name="RC0" x="-20.32" y="-7.62" length="short"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -14335,6 +14189,49 @@ Microminiature Tactile Switch for SMT</description>
 </device>
 </devices>
 </deviceset>
+<deviceset name="PIC18F25K50" prefix="IC">
+<description>&lt;h1&gt;PIC18F25K50&lt;/h1&gt;</description>
+<gates>
+<gate name="G$1" symbol="PIC18F25K50" x="0" y="0"/>
+</gates>
+<devices>
+<device name="SO28W" package="SO28W">
+<connects>
+<connect gate="G$1" pin="AN11/RB4" pad="25"/>
+<connect gate="G$1" pin="AN9/RB3" pad="24"/>
+<connect gate="G$1" pin="D+/RC5" pad="16"/>
+<connect gate="G$1" pin="D-/RC4" pad="15"/>
+<connect gate="G$1" pin="INT0/AN12/RB0" pad="21"/>
+<connect gate="G$1" pin="INT1/AN10/RB1" pad="22"/>
+<connect gate="G$1" pin="INT2/AN8/RB2" pad="23"/>
+<connect gate="G$1" pin="PGC/RB6" pad="27"/>
+<connect gate="G$1" pin="PGD/RB7" pad="28"/>
+<connect gate="G$1" pin="PGM/AN13/RB5" pad="26"/>
+<connect gate="G$1" pin="RA0/AN0" pad="2"/>
+<connect gate="G$1" pin="RA1/AN1" pad="3"/>
+<connect gate="G$1" pin="RA2/AN2" pad="4"/>
+<connect gate="G$1" pin="RA3/AN3" pad="5"/>
+<connect gate="G$1" pin="RA4" pad="6"/>
+<connect gate="G$1" pin="RA5/AN4" pad="7"/>
+<connect gate="G$1" pin="RA6" pad="10"/>
+<connect gate="G$1" pin="RA7" pad="9"/>
+<connect gate="G$1" pin="RC0" pad="11"/>
+<connect gate="G$1" pin="RC1" pad="12"/>
+<connect gate="G$1" pin="RC2" pad="13"/>
+<connect gate="G$1" pin="RE3/MCLR/VPP" pad="1"/>
+<connect gate="G$1" pin="RX/RC7" pad="18"/>
+<connect gate="G$1" pin="TX/RC6" pad="17"/>
+<connect gate="G$1" pin="V-USB" pad="14"/>
+<connect gate="G$1" pin="VDD" pad="20"/>
+<connect gate="G$1" pin="VSS" pad="8"/>
+<connect gate="G$1" pin="VSS@19" pad="19"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 </libraries>
@@ -14347,7 +14244,6 @@ Microminiature Tactile Switch for SMT</description>
 </class>
 </classes>
 <parts>
-<part name="IC1" library="microchip" deviceset="PIC18F2*_28" device="W" technology="550" value="PIC18F25K50"/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="R2" library="rcl" deviceset="R-US_" device="M1206" value="100"/>
@@ -14405,6 +14301,7 @@ Microminiature Tactile Switch for SMT</description>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="VR1" library="irk" deviceset="TRIMPOT" device="3303W" value="10k"/>
 <part name="U1" library="irk" deviceset="TSOP4838" device=""/>
+<part name="IC1" library="irk" deviceset="PIC18F25K50" device="SO28W" value="PIC18F25K50"/>
 </parts>
 <sheets>
 <sheet>
@@ -14428,7 +14325,6 @@ Microminiature Tactile Switch for SMT</description>
 <text x="205.74" y="121.92" size="1.778" layer="97">&gt;LAST_DATE_TIME</text>
 </plain>
 <instances>
-<instance part="IC1" gate="G$1" x="78.74" y="48.26"/>
 <instance part="P+1" gate="1" x="-48.26" y="116.84"/>
 <instance part="P+2" gate="1" x="147.32" y="116.84"/>
 <instance part="R2" gate="G$1" x="226.06" y="93.98" rot="R90"/>
@@ -14514,56 +14410,57 @@ Microminiature Tactile Switch for SMT</description>
 <instance part="GND4" gate="1" x="205.74" y="71.12"/>
 <instance part="VR1" gate="&gt;NAME" x="-48.26" y="71.12"/>
 <instance part="U1" gate="&gt;G$1" x="251.46" y="53.34" rot="MR0"/>
+<instance part="IC1" gate="G$1" x="78.74" y="45.72"/>
 </instances>
 <busses>
 </busses>
 <nets>
 <net name="N$1" class="0">
 <segment>
-<wire x1="40.64" y1="60.96" x2="-5.08" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="60.96" x2="-5.08" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="-5.08" y1="60.96" x2="-5.08" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RA0/AN0"/>
 <pinref part="LCD1" gate="&gt;NAME" pin="D4"/>
+<pinref part="IC1" gate="G$1" pin="RA0/AN0"/>
 </segment>
 </net>
 <net name="N$2" class="0">
 <segment>
-<wire x1="40.64" y1="58.42" x2="-2.54" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="58.42" x2="-2.54" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="-2.54" y1="58.42" x2="-2.54" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RA1/AN1"/>
 <pinref part="LCD1" gate="&gt;NAME" pin="D5"/>
+<pinref part="IC1" gate="G$1" pin="RA1/AN1"/>
 </segment>
 </net>
 <net name="N$3" class="0">
 <segment>
-<wire x1="40.64" y1="55.88" x2="0" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="55.88" x2="0" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="0" y1="55.88" x2="0" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RA2/AN2/VREF-/CVREF"/>
 <pinref part="LCD1" gate="&gt;NAME" pin="D6"/>
+<pinref part="IC1" gate="G$1" pin="RA2/AN2"/>
 </segment>
 </net>
 <net name="N$4" class="0">
 <segment>
-<wire x1="40.64" y1="53.34" x2="2.54" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="53.34" x2="2.54" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="2.54" y1="53.34" x2="2.54" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RA3/AN3/VREF+"/>
 <pinref part="LCD1" gate="&gt;NAME" pin="D7"/>
+<pinref part="IC1" gate="G$1" pin="RA3/AN3"/>
 </segment>
 </net>
 <net name="N$5" class="0">
 <segment>
-<wire x1="40.64" y1="50.8" x2="-22.86" y2="50.8" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="50.8" x2="-22.86" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="-22.86" y1="50.8" x2="-22.86" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RA4/T0CKI/CIOUT/RCV"/>
 <pinref part="LCD1" gate="&gt;NAME" pin="RS"/>
+<pinref part="IC1" gate="G$1" pin="RA4"/>
 </segment>
 </net>
 <net name="N$6" class="0">
 <segment>
-<wire x1="40.64" y1="48.26" x2="-17.78" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="48.26" x2="-17.78" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="-17.78" y1="48.26" x2="-17.78" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RA5/AN4/!SS!/HLVDIN/C2OUT"/>
 <pinref part="LCD1" gate="&gt;NAME" pin="E"/>
+<pinref part="IC1" gate="G$1" pin="RA5/AN4"/>
 </segment>
 </net>
 <net name="+5V" class="0">
@@ -14596,18 +14493,18 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="142.24" y1="76.2" x2="147.32" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="76.2" x2="154.94" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="76.2" x2="147.32" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="43.18" x2="147.32" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="43.18" x2="147.32" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="165.1" y1="86.36" x2="165.1" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="165.1" y1="86.36" x2="147.32" y2="86.36" width="0.1524" layer="91"/>
 <junction x="147.32" y="76.2"/>
 <junction x="147.32" y="86.36"/>
 <pinref part="P+2" gate="1" pin="+5V"/>
 <pinref part="C5" gate="G$1" pin="1"/>
-<pinref part="IC1" gate="G$1" pin="VDD"/>
 <pinref part="JP2" gate="A" pin="2"/>
 <pinref part="D1" gate="&gt;NAME" pin="K"/>
 <pinref part="D3" gate="&gt;NAME" pin="K"/>
 <wire x1="147.32" y1="114.3" x2="147.32" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="VDD"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="P" pin="V+"/>
@@ -14629,24 +14526,24 @@ Microminiature Tactile Switch for SMT</description>
 </net>
 <net name="N$8" class="0">
 <segment>
-<wire x1="40.64" y1="63.5" x2="22.86" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="63.5" x2="22.86" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="134.62" y1="88.9" x2="22.86" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="88.9" x2="22.86" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="58.42" y1="83.82" x2="22.86" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="83.82" x2="22.86" y2="83.82" width="0.1524" layer="91"/>
 <junction x="22.86" y="83.82"/>
-<pinref part="IC1" gate="G$1" pin="!MCLR!/VPP/RE3"/>
 <pinref part="R9" gate="G$1" pin="1"/>
 <pinref part="R1" gate="G$1" pin="2"/>
 <pinref part="D2" gate="&gt;NAME" pin="K"/>
+<pinref part="IC1" gate="G$1" pin="RE3/MCLR/VPP"/>
+<wire x1="22.86" y1="63.5" x2="58.42" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$10" class="0">
 <segment>
-<wire x1="243.84" y1="53.34" x2="116.84" y2="53.34" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RB3/AN9/CCP2/VPO"/>
+<wire x1="243.84" y1="53.34" x2="96.52" y2="53.34" width="0.1524" layer="91"/>
 <pinref part="U1" gate="&gt;G$1" pin="OUT"/>
+<pinref part="IC1" gate="G$1" pin="AN9/RB3"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -14655,12 +14552,12 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="261.62" y1="-2.54" x2="231.14" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="231.14" y1="-2.54" x2="231.14" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="231.14" y1="63.5" x2="170.18" y2="63.5" width="0.1524" layer="91"/>
-<wire x1="170.18" y1="63.5" x2="116.84" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="63.5" x2="96.52" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="170.18" y1="96.52" x2="170.18" y2="63.5" width="0.1524" layer="91"/>
 <junction x="170.18" y="63.5"/>
-<pinref part="IC1" gate="G$1" pin="RB7/BKI3/PGD"/>
 <pinref part="JP2" gate="A" pin="4"/>
 <pinref part="S1" gate="&gt;NAME" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="PGD/RB7"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -14669,12 +14566,12 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="248.92" y1="-5.08" x2="228.6" y2="-5.08" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="-5.08" x2="228.6" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="60.96" x2="172.72" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="60.96" x2="116.84" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="60.96" x2="96.52" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="96.52" x2="172.72" y2="60.96" width="0.1524" layer="91"/>
 <junction x="172.72" y="60.96"/>
-<pinref part="IC1" gate="G$1" pin="RB6/KBI2/PGC"/>
 <pinref part="JP2" gate="A" pin="5"/>
 <pinref part="S2" gate="&gt;NAME" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="PGC/RB6"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -14683,20 +14580,20 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="236.22" y1="-7.62" x2="226.06" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="-7.62" x2="226.06" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="58.42" x2="175.26" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="175.26" y1="58.42" x2="116.84" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="58.42" x2="96.52" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="96.52" x2="175.26" y2="58.42" width="0.1524" layer="91"/>
 <junction x="175.26" y="58.42"/>
-<pinref part="IC1" gate="G$1" pin="RB5/KBI1/PGM"/>
 <pinref part="JP2" gate="A" pin="6"/>
 <pinref part="S3" gate="&gt;NAME" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="PGM/AN13/RB5"/>
 </segment>
 </net>
 <net name="N$15" class="0">
 <segment>
 <wire x1="223.52" y1="-12.7" x2="223.52" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="223.52" y1="55.88" x2="116.84" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RB4/AN11/KBI0/CSSPP"/>
+<wire x1="223.52" y1="55.88" x2="96.52" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="S4" gate="&gt;NAME" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="AN11/RB4"/>
 </segment>
 </net>
 <net name="N$16" class="0">
@@ -14704,19 +14601,19 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="210.82" y1="-12.7" x2="210.82" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="210.82" y1="-7.62" x2="220.98" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="-7.62" x2="220.98" y2="50.8" width="0.1524" layer="91"/>
-<wire x1="220.98" y1="50.8" x2="116.84" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RB2/AN8/INT2/VMO"/>
+<wire x1="220.98" y1="50.8" x2="96.52" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="S5" gate="&gt;NAME" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="INT2/AN8/RB2"/>
 </segment>
 </net>
 <net name="N$17" class="0">
 <segment>
-<wire x1="218.44" y1="48.26" x2="116.84" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="48.26" x2="96.52" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="-12.7" x2="198.12" y2="-5.08" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="-5.08" x2="218.44" y2="-5.08" width="0.1524" layer="91"/>
 <wire x1="218.44" y1="-5.08" x2="218.44" y2="48.26" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RB1/AN10/INT1/SCK/SCL"/>
 <pinref part="S6" gate="&gt;NAME" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="INT1/AN10/RB1"/>
 </segment>
 </net>
 <net name="N$18" class="0">
@@ -14724,9 +14621,9 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="185.42" y1="-12.7" x2="185.42" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="-2.54" x2="215.9" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="-2.54" x2="215.9" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="215.9" y1="45.72" x2="116.84" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RB0/AN12/INT0/LFT0/SDI/SDA"/>
+<wire x1="215.9" y1="45.72" x2="96.52" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="S7" gate="&gt;NAME" pin="4"/>
+<pinref part="IC1" gate="G$1" pin="INT0/AN12/RB0"/>
 </segment>
 </net>
 <net name="N$20" class="0">
@@ -14755,10 +14652,10 @@ Microminiature Tactile Switch for SMT</description>
 </net>
 <net name="N$28" class="0">
 <segment>
-<wire x1="40.64" y1="33.02" x2="10.16" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="33.02" x2="10.16" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-13.97" x2="10.16" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RC2/CCP1/P1A"/>
 <pinref part="R5" gate="G$1" pin="2"/>
+<pinref part="IC1" gate="G$1" pin="RC2"/>
 </segment>
 </net>
 <net name="N$29" class="0">
@@ -14772,12 +14669,12 @@ Microminiature Tactile Switch for SMT</description>
 <net name="N$19" class="0">
 <segment>
 <wire x1="33.02" y1="-15.24" x2="33.02" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="30.48" x2="40.64" y2="30.48" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="VUSB"/>
 <pinref part="C4" gate="G$1" pin="1"/>
 <pinref part="C3" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="-15.24" x2="33.02" y2="-15.24" width="0.1524" layer="91"/>
 <junction x="33.02" y="-15.24"/>
+<pinref part="IC1" gate="G$1" pin="V-USB"/>
+<wire x1="33.02" y1="30.48" x2="58.42" y2="30.48" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$30" class="0">
@@ -14801,12 +14698,12 @@ Microminiature Tactile Switch for SMT</description>
 <segment>
 <wire x1="22.86" y1="-50.8" x2="22.86" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="43.18" x2="22.86" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="45.72" x2="40.64" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="VSS"/>
 <pinref part="GND34" gate="1" pin="GND"/>
-<pinref part="IC1" gate="G$1" pin="OSC1/CLKI"/>
-<wire x1="40.64" y1="43.18" x2="22.86" y2="43.18" width="0.1524" layer="91"/>
 <junction x="22.86" y="43.18"/>
+<pinref part="IC1" gate="G$1" pin="VSS"/>
+<wire x1="22.86" y1="45.72" x2="58.42" y2="45.72" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="RA7"/>
+<wire x1="22.86" y1="43.18" x2="58.42" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="33.02" y1="-50.8" x2="33.02" y2="-22.86" width="0.1524" layer="91"/>
@@ -14824,18 +14721,18 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="147.32" y1="27.94" x2="147.32" y2="-50.8" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="35.56" x2="147.32" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="40.64" x2="139.7" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="40.64" x2="139.7" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="40.64" x2="139.7" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="27.94" x2="147.32" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="96.52" x2="167.64" y2="27.94" width="0.1524" layer="91"/>
 <junction x="175.26" y="27.94"/>
 <junction x="147.32" y="27.94"/>
 <junction x="167.64" y="27.94"/>
 <pinref part="C5" gate="G$1" pin="2"/>
-<pinref part="IC1" gate="G$1" pin="VSS@1"/>
 <pinref part="GND30" gate="1" pin="GND"/>
 <pinref part="C1" gate="G$1" pin="-"/>
 <pinref part="JP2" gate="A" pin="3"/>
 <pinref part="JP3" gate="A" pin="7"/>
+<pinref part="IC1" gate="G$1" pin="VSS@19"/>
 </segment>
 <segment>
 <wire x1="226.06" y1="73.66" x2="226.06" y2="76.2" width="0.1524" layer="91"/>
@@ -14959,11 +14856,11 @@ Microminiature Tactile Switch for SMT</description>
 </net>
 <net name="N$34" class="0">
 <segment>
-<wire x1="40.64" y1="35.56" x2="-81.28" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="35.56" x2="-81.28" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="-81.28" y1="35.56" x2="-81.28" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="-81.28" y1="96.52" x2="-78.74" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RC1/T1OSI/ICCP2/!UOE"/>
 <pinref part="R8" gate="G$1" pin="1"/>
+<pinref part="IC1" gate="G$1" pin="RC1"/>
 </segment>
 </net>
 <net name="N$36" class="0">
@@ -14975,29 +14872,29 @@ Microminiature Tactile Switch for SMT</description>
 </net>
 <net name="PWR" class="0">
 <segment>
-<wire x1="116.84" y1="35.56" x2="129.54" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="129.54" y1="35.56" x2="129.54" y2="-5.08" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RC6/TX/CK"/>
 <pinref part="IC2" gate="C" pin="IN"/>
 <wire x1="129.54" y1="-5.08" x2="116.84" y2="-5.08" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="TX/RC6"/>
+<wire x1="129.54" y1="35.56" x2="96.52" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$23" class="0">
 <segment>
-<wire x1="116.84" y1="33.02" x2="190.5" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="33.02" x2="190.5" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="33.02" x2="193.04" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="193.04" y1="30.48" x2="200.66" y2="30.48" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RC5/D+/VP"/>
 <pinref part="JP3" gate="A" pin="5"/>
+<pinref part="IC1" gate="G$1" pin="D+/RC5"/>
 </segment>
 </net>
 <net name="N$24" class="0">
 <segment>
-<wire x1="116.84" y1="30.48" x2="190.5" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="30.48" x2="190.5" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="30.48" x2="193.04" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="193.04" y1="33.02" x2="200.66" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RC4/D-/VM"/>
 <pinref part="JP3" gate="A" pin="3"/>
+<pinref part="IC1" gate="G$1" pin="D-/RC4"/>
 </segment>
 </net>
 <net name="N$45" class="0">
@@ -15010,10 +14907,10 @@ Microminiature Tactile Switch for SMT</description>
 </net>
 <net name="N$46" class="0">
 <segment>
-<wire x1="40.64" y1="38.1" x2="-22.86" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="38.1" x2="-22.86" y2="38.1" width="0.1524" layer="91"/>
 <wire x1="-22.86" y1="38.1" x2="-22.86" y2="-5.08" width="0.1524" layer="91"/>
 <pinref part="LED1" gate="G$1" pin="A"/>
-<pinref part="IC1" gate="G$1" pin="RC0/TIOSO/T13CKI"/>
+<pinref part="IC1" gate="G$1" pin="RC0"/>
 </segment>
 </net>
 <net name="N$21" class="0">
@@ -15035,22 +14932,22 @@ Microminiature Tactile Switch for SMT</description>
 </net>
 <net name="RST" class="0">
 <segment>
-<wire x1="137.16" y1="38.1" x2="116.84" y2="38.1" width="0.1524" layer="91"/>
 <wire x1="137.16" y1="38.1" x2="137.16" y2="-43.18" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="RC7/RX/DT/SDO"/>
 <pinref part="IC2" gate="A" pin="IN"/>
 <wire x1="137.16" y1="-43.18" x2="116.84" y2="-43.18" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="RX/RC7"/>
+<wire x1="137.16" y1="38.1" x2="96.52" y2="38.1" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AUX" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="RA6/OSC2/CLKO"/>
-<wire x1="40.64" y1="40.64" x2="27.94" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="40.64" x2="27.94" y2="22.86" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="22.86" x2="134.62" y2="22.86" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="40.64" x2="48.26" y2="22.86" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="22.86" x2="134.62" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="134.62" y1="22.86" x2="134.62" y2="-25.4" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="B" pin="IN"/>
 <wire x1="134.62" y1="-25.4" x2="116.84" y2="-25.4" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="RA6"/>
+<wire x1="48.26" y1="40.64" x2="58.42" y2="40.64" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$11" class="0">
@@ -15118,12 +15015,12 @@ Microminiature Tactile Switch for SMT</description>
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,40.64,45.72,IC1,VSS,GND,,,"/>
-<approved hash="104,1,116.84,43.18,IC1,VDD,+5V,,,"/>
-<approved hash="104,1,116.84,40.64,IC1,VSS,GND,,,"/>
 <approved hash="104,1,-27.94,104.14,LCD1,VCC,+5V,,,"/>
-<approved hash="104,1,165.1,-10.16,IC2P,V+,+5V,,,"/>
+<approved hash="104,1,205.74,96.52,IC2P,V+,+5V,,,"/>
 <approved hash="104,1,243.84,55.88,U1,V+,N$50,,,"/>
+<approved hash="104,1,58.42,45.72,IC1,VSS,GND,,,"/>
+<approved hash="104,1,96.52,40.64,IC1,VSS,GND,,,"/>
+<approved hash="104,1,96.52,43.18,IC1,VDD,+5V,,,"/>
 <approved hash="108,1,147.32,43.18,+5V,,,,,"/>
 <approved hash="108,1,-48.26,86.36,+5V,,,,,"/>
 <approved hash="108,1,236.22,-35.56,GND,,,,,"/>
