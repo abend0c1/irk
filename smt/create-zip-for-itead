@@ -1,0 +1,2 @@
+#!/bin/bash
+zip ./IRK-$1.zip IRK.sch IRK.brd IRK.lbr IRK.gto IRK.gtl IRK.gpi IRK.gbs IRK.gbo IRK.gbl IRK.txt IRK.gts IRK.gko
