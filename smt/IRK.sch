@@ -55,7 +55,7 @@
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
-<layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
@@ -13119,6 +13119,21 @@ Source: www.kingbright.com</description>
 <rectangle x1="5.969" y1="-2.921" x2="6.731" y2="-1.905" layer="21"/>
 <rectangle x1="8.509" y1="-2.921" x2="9.271" y2="-1.905" layer="21"/>
 </package>
+<package name="1X01">
+<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
+<wire x1="-0.635" y1="1.27" x2="0.635" y2="1.27" width="0.1524" layer="21"/>
+<wire x1="0.635" y1="1.27" x2="1.27" y2="0.635" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="0.635" x2="1.27" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="-0.635" x2="0.635" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="0.635" x2="-1.27" y2="-0.635" width="0.1524" layer="21"/>
+<wire x1="-0.635" y1="1.27" x2="-1.27" y2="0.635" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="-0.635" x2="-0.635" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="0.635" y1="-1.27" x2="-0.635" y2="-1.27" width="0.1524" layer="21"/>
+<pad name="1" x="0" y="0" drill="1.016" shape="octagon"/>
+<text x="-1.3462" y="1.8288" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-1.27" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.254" y1="-0.254" x2="0.254" y2="0.254" layer="51"/>
+</package>
 </packages>
 <symbols>
 <symbol name="PINHD6">
@@ -13168,6 +13183,15 @@ Source: www.kingbright.com</description>
 <pin name="6" x="-2.54" y="-2.54" visible="pad" length="short" direction="pas" function="dot"/>
 <pin name="7" x="-2.54" y="-5.08" visible="pad" length="short" direction="pas" function="dot"/>
 <pin name="8" x="-2.54" y="-7.62" visible="pad" length="short" direction="pas" function="dot"/>
+</symbol>
+<symbol name="PINHD1">
+<wire x1="-6.35" y1="-2.54" x2="1.27" y2="-2.54" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="-2.54" x2="1.27" y2="2.54" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="-6.35" y2="2.54" width="0.4064" layer="94"/>
+<wire x1="-6.35" y1="2.54" x2="-6.35" y2="-2.54" width="0.4064" layer="94"/>
+<text x="-6.35" y="3.175" size="1.778" layer="95">&gt;NAME</text>
+<text x="-6.35" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="1" x="-2.54" y="0" visible="pad" length="short" direction="pas" function="dot"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -13278,6 +13302,22 @@ Source: www.kingbright.com</description>
 <connect gate="A" pin="6" pad="6"/>
 <connect gate="A" pin="7" pad="7"/>
 <connect gate="A" pin="8" pad="8"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="PINHD-1X1" prefix="JP" uservalue="yes">
+<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
+<gates>
+<gate name="G$1" symbol="PINHD1" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="1X01">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -14302,6 +14342,11 @@ Microminiature Tactile Switch for SMT</description>
 <part name="VR1" library="irk" deviceset="TRIMPOT" device="3303W" value="10k"/>
 <part name="U1" library="irk" deviceset="TSOP4838" device=""/>
 <part name="IC1" library="irk" deviceset="PIC18F25K50" device="SO28W" value="PIC18F25K50"/>
+<part name="3" library="pinhead" deviceset="PINHD-1X1" device="" value=" "/>
+<part name="6" library="pinhead" deviceset="PINHD-1X1" device="" value=" "/>
+<part name="9" library="pinhead" deviceset="PINHD-1X1" device="" value=" "/>
+<part name="10" library="pinhead" deviceset="PINHD-1X1" device="" value=" "/>
+<part name="GND5" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -14411,6 +14456,11 @@ Microminiature Tactile Switch for SMT</description>
 <instance part="VR1" gate="&gt;NAME" x="-48.26" y="71.12"/>
 <instance part="U1" gate="&gt;G$1" x="251.46" y="53.34" rot="MR0"/>
 <instance part="IC1" gate="G$1" x="78.74" y="45.72"/>
+<instance part="3" gate="G$1" x="-50.8" y="-2.54"/>
+<instance part="6" gate="G$1" x="-50.8" y="-12.7"/>
+<instance part="9" gate="G$1" x="-50.8" y="-22.86"/>
+<instance part="10" gate="G$1" x="-50.8" y="-33.02"/>
+<instance part="GND5" gate="1" x="-40.64" y="-53.34"/>
 </instances>
 <busses>
 </busses>
@@ -14831,6 +14881,24 @@ Microminiature Tactile Switch for SMT</description>
 <pinref part="GND4" gate="1" pin="GND"/>
 <junction x="205.74" y="73.66"/>
 <wire x1="205.74" y1="73.66" x2="205.74" y2="81.28" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="3" gate="G$1" pin="1"/>
+<wire x1="-40.64" y1="-33.02" x2="-40.64" y2="-22.86" width="0.1524" layer="91"/>
+<wire x1="-40.64" y1="-22.86" x2="-40.64" y2="-12.7" width="0.1524" layer="91"/>
+<wire x1="-40.64" y1="-12.7" x2="-40.64" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="-40.64" y1="-2.54" x2="-53.34" y2="-2.54" width="0.1524" layer="91"/>
+<pinref part="10" gate="G$1" pin="1"/>
+<wire x1="-53.34" y1="-33.02" x2="-40.64" y2="-33.02" width="0.1524" layer="91"/>
+<pinref part="6" gate="G$1" pin="1"/>
+<wire x1="-53.34" y1="-12.7" x2="-40.64" y2="-12.7" width="0.1524" layer="91"/>
+<junction x="-40.64" y="-12.7"/>
+<pinref part="9" gate="G$1" pin="1"/>
+<wire x1="-53.34" y1="-22.86" x2="-40.64" y2="-22.86" width="0.1524" layer="91"/>
+<junction x="-40.64" y="-22.86"/>
+<pinref part="GND5" gate="1" pin="GND"/>
+<wire x1="-40.64" y1="-50.8" x2="-40.64" y2="-33.02" width="0.1524" layer="91"/>
+<junction x="-40.64" y="-33.02"/>
 </segment>
 </net>
 <net name="N$50" class="0">
