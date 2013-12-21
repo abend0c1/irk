@@ -791,8 +791,8 @@ Microcontrollers with XLP Technology&lt;/h2&gt;</description>
 <pin name="VSS@19" x="17.78" y="-5.08" length="short" direction="pwr" rot="R180"/>
 <pin name="INT2/AN8/RB2" x="17.78" y="5.08" length="short" rot="R180"/>
 <pin name="INT1/AN10/RB1" x="17.78" y="2.54" length="short" rot="R180"/>
-<pin name="RA6" x="-20.32" y="-5.08" length="short" direction="out"/>
-<pin name="RA7" x="-20.32" y="-2.54" length="short" direction="in"/>
+<pin name="RA6" x="-20.32" y="-5.08" length="short"/>
+<pin name="RA7" x="-20.32" y="-2.54" length="short"/>
 <pin name="RA0/AN0" x="-20.32" y="15.24" length="short"/>
 <pin name="RA1/AN1" x="-20.32" y="12.7" length="short"/>
 <pin name="RA5/AN4" x="-20.32" y="2.54" length="short"/>

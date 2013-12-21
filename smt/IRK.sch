@@ -13959,8 +13959,8 @@ Microcontrollers with XLP Technology&lt;/h2&gt;</description>
 <pin name="VSS@19" x="17.78" y="-5.08" length="short" direction="pwr" rot="R180"/>
 <pin name="INT2/AN8/RB2" x="17.78" y="5.08" length="short" rot="R180"/>
 <pin name="INT1/AN10/RB1" x="17.78" y="2.54" length="short" rot="R180"/>
-<pin name="RA6" x="-20.32" y="-5.08" length="short" direction="out"/>
-<pin name="RA7" x="-20.32" y="-2.54" length="short" direction="in"/>
+<pin name="RA6" x="-20.32" y="-5.08" length="short"/>
+<pin name="RA7" x="-20.32" y="-2.54" length="short"/>
 <pin name="RA0/AN0" x="-20.32" y="15.24" length="short"/>
 <pin name="RA1/AN1" x="-20.32" y="12.7" length="short"/>
 <pin name="RA5/AN4" x="-20.32" y="2.54" length="short"/>
@@ -14438,9 +14438,15 @@ Microminiature Tactile Switch for SMT</description>
 <attribute name="NAME" x="176.53" y="-20.32" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="179.07" y="-27.94" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="D2" gate="&gt;NAME" x="137.16" y="88.9" rot="R180"/>
+<instance part="D2" gate="&gt;NAME" x="137.16" y="88.9" smashed="yes" rot="R180">
+<attribute name="NAME" x="137.16" y="93.4974" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="139.7" y="86.1314" size="1.778" layer="96" rot="R180"/>
+</instance>
 <instance part="D1" gate="&gt;NAME" x="139.7" y="76.2"/>
-<instance part="D3" gate="&gt;NAME" x="157.48" y="76.2" rot="R180"/>
+<instance part="D3" gate="&gt;NAME" x="157.48" y="76.2" smashed="yes" rot="R180">
+<attribute name="NAME" x="157.48" y="80.7974" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="160.02" y="72.9234" size="1.778" layer="96" rot="R180"/>
+</instance>
 <instance part="LCD1" gate="&gt;NAME" x="-12.7" y="114.3"/>
 <instance part="JP5" gate="A" x="60.96" y="-17.78" rot="R180"/>
 <instance part="IC2" gate="A" x="104.14" y="-43.18"/>
@@ -14874,13 +14880,13 @@ Microminiature Tactile Switch for SMT</description>
 <wire x1="53.34" y1="-17.78" x2="63.5" y2="-17.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="C6" gate="G$1" pin="2"/>
 <pinref part="IC2" gate="P" pin="GND"/>
-<wire x1="195.58" y1="86.36" x2="195.58" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="195.58" y1="73.66" x2="205.74" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="GND4" gate="1" pin="GND"/>
-<junction x="205.74" y="73.66"/>
 <wire x1="205.74" y1="73.66" x2="205.74" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="C6" gate="G$1" pin="2"/>
+<wire x1="195.58" y1="86.36" x2="195.58" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="195.58" y1="81.28" x2="205.74" y2="81.28" width="0.1524" layer="91"/>
+<junction x="205.74" y="81.28"/>
 </segment>
 <segment>
 <pinref part="3" gate="G$1" pin="1"/>

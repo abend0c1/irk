@@ -72,6 +72,47 @@ PIN USAGE -                      PIC18F25K50
             (220nF)     --- | VUSB 14   15 RC4 | <-> (USB D-)
                             '------------------'
 
+CONFIG    - The PIC18F25K50 configuration fuses should be set as follows (items
+            marked with '*' are essential for IRK! to operate correctly):
+
+            CONFIG1L 2B 00101011
+                          1      = *LS48MHZ: System clock is expected at 48 MHz, FS/LS USB clock divide-by is set to 8
+                           01    = *CPUDIV: CPU system clock (48 MHz) divided by 2 (= 24 MHZ)
+                             0   =  Unimplemented
+                              x  =  CFGPLLEN: (ignored, set dynamically)
+                               x =  PLLSEL: (ignored, set dynamically)
+            CONFIG1H 28 00101000
+                        0        =  IESO: Oscillator Switchover mode disabled
+                         0       =  FCMEN: Fail-Safe Clock Monitor disabled
+                          1      = *PCLKEN: Primary Clock is always enabled
+                           0     =  Unimplemented
+                            1000 = *FOSC: Internal oscillator block
+            CONFIG2L 5F 01011111
+                        0        =  Unimplemented
+                         1       =  LPBOR: Low-Power Brown-out Reset disabled
+                          0      =  Unimplemented
+                           11    =  BORV: VBOR set to 1.9V nominal
+                             11  =  BOREN: Brown-out Reset enabled in hardware only (SBOREN is disabled)
+                               1 =  PWRTEN: Power-up Timer disabled
+            CONFIG2H 3C 00111100
+                        00       =  Unimplemented
+                          1111   =  WDTPS: Watchdog Timer Postscale Select = 1:32768
+                              00 =  WDTEN: Watchdog Timer disabled in hardware, SWDTEN bit disabled
+            CONFIG3L 00 00000000
+                        00000000 =  Unimplemented
+            CONFIG3H 53 01010000
+                        0        = *MCLRE: RE3 input pin enabled; MCLR disabled
+                         1       =  SDOMX: SDO is on RB3
+                          0      =  Unimplemented
+                           1     =  T3CMX: T3CKI is on RC0
+                            00   =  Unimplemented
+                              0  =  PDADEN: ANSELB<5:0> resets to 0, PORTB<4:0> pins are configured as digital I/O on Reset
+                               0 = *CCP2MX: CCP2 input/output is multiplexed with RB3
+            CONFIG4L 81 10000001 =  Default
+            CONFIG5L 0F 00001111 =  Default
+            CONFIG5H C0 11000000 =  Default
+            CONFIG6L 0F 00001111 =  Default
+
 OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
 
             .----------------.
@@ -297,7 +338,7 @@ NOTES    - 1. The source code is written in MikroC Pro from mikroe.com
            4. Timer0 is used for LCD display backlight timeouts
               Timer1 is used for IR signal capture timings
               Timer2 is used for IR signal transmission (PWM)
-              Timer3 is used for "typ-o-matic" button repeats
+              Timer3 is used for key repeats
 
            5. IRK! will send *any* USB code that you select to the host - not
               just that ones that it displays with a name. For example, you can
@@ -497,7 +538,6 @@ sbit AUX_SWITCH              at RA6_bit;  // Auxiliary switch
 // Inputs
 sbit USB_POWER_GOOD          at RE3_bit;  // USB Power Good detection
 
-volatile signed short nTypomaticDelay;
 volatile signed short nBacklightDelay;    // Seconds to keep backlight on
 
 volatile union
@@ -508,7 +548,7 @@ volatile union
 
 volatile byte nRiseOrFall;  // CCP2CON at time of capture interrupt
 #define bRisingEdge nRiseOrFall.B0    // Bit 0 in CCP2CON = 1 means rising edge detected
-#define bFallingEdge !bRisingEdge            // Bit 0 in CCP2CON = 0 means rising edge detected
+#define bFallingEdge !bRisingEdge     // Bit 0 in CCP2CON = 0 means falling edge detected
 
 volatile byte                      cFlags;
 #define bInfraredInterruptPending  cFlags.B7
@@ -517,7 +557,7 @@ volatile byte                      cFlags;
 #define bSettingUsage              cFlags.B4
 #define bLastUSBPower              cFlags.B3
 #define bSettingDeviceAddress      cFlags.B2
-#define bTypomaticPending          cFlags.B1
+#define bKeyRepeatPending          cFlags.B1
 #define bUSBReady                  cFlags.B0
 
 byte nState;
@@ -535,9 +575,6 @@ union
 byte nConfigDeviceAddress;
 byte nConfigBacklightDelay;
 byte nNewBacklightDelay;
-
-#define SLOW_REPEAT_RATE_FACTOR 2 // Slow the typomatic repeat rate by this factor
-byte nTypomaticSlowCount;
 
 // Local IRK! function codes...
 #define CMD_SET_DEVICE_ADDRESS        0x00
@@ -557,6 +594,11 @@ byte nTypomaticSlowCount;
 // noise and reduce the sensitivity of the device for a period of about 4 times
 // the duration of the burst.
 
+// Set the Timer0 constant for a 1 second interrupt:
+#define CLOCK_FREQUENCY       (__FOSC__ * 1000)
+#define TIMER0_PRESCALER      256
+#define ONE_SECOND            (65535 - (CLOCK_FREQUENCY/4/TIMER0_PRESCALER))
+
 // The following delays are in microseconds and are used as-is when
 // transmitting an IR signal...
 #define WIDTH_ERROR_MARGIN             300
@@ -566,25 +608,47 @@ byte nTypomaticSlowCount;
 #define WIDTH_SILENCE_AFTER_TRAINING   600
 
 // ...however, to measure these delays when RECEIVING an IR signal, the numbers
-// will only work if Timer1 is prescaled to run at 1 MHz. In this project,
-// the MCU clock is running at 24 MHz so it feeds Timer1 with 24/4 = 6 MHz
+// will only be correct if Timer1 runs at 1 MHz:
+
+// If the MCU clock is running at 24 MHz it feeds Timer1 with 24/4 = 6 MHz
 // pulses that are prescaled by a factor of 1:8, giving a Timer1 tick
 // rate of 0.75 MHz, not 1 MHz, so we have to scale the above units
 // by 3/4 to give microsecond units (3 Timer1 ticks is 4 microseconds)...
-#define MICROSECONDS 3 / 4
+// #define MICROSECONDS 3 / 4
+// ...which is the same as 6 / 8
 
-// Set the Timer0 constant for a 1 second interrupt:
-#define CLOCK_FREQUENCY       24000000
-#define TIMER0_PRESCALER      256
-#define ONE_SECOND            (65535 - (CLOCK_FREQUENCY/4/TIMER0_PRESCALER))
+// If the MCU clock is running at 48 MHz it feeds Timer1 with 48/4 = 12 MHz
+// pulses that are prescaled by a factor of 1:8, giving a Timer1 tick
+// rate of 1.5 MHz, not 1 MHz, so we have to scale the above units
+// by 3/2 to give microsecond units (3 Timer1 ticks is 2 microseconds)...
+// #define MICROSECONDS 3 / 2
+// ...which is the same as 12 / 8
+
+// Letting the compiler work it out for us, we have...
+#define TIMER1_PRESCALER      8
+#define TIMER1_RATE (CLOCK_FREQUENCY/4/TIMER1_PRESCALER)
+#define NUMERATOR (TIMER1_RATE * 8 / 1000000)
+#define MICROSECONDS (NUMERATOR / 8)
+
+
+#define TIMER3_PRESCALER      8
+#define TIMER3_RATE (CLOCK_FREQUENCY/4/TIMER3_PRESCALER)
+#define TIMER3_INTERRUPTS_PER_SECOND (TIMER3_RATE / 65536)
+#define KEY_REPEAT_DELAY_IN_SECONDS 0.75
+#define KEY_REPEAT_DELAY_IN_TICKS (KEY_REPEAT_DELAY_IN_SECONDS * TIMER3_INTERRUPTS_PER_SECOND)
+volatile signed short nKeyRepeatDelay; // Number of Timer3 ticks before key repeat starts
+
+#define FRONT_PANEL_KEY_REPEAT_RATE_IN_HZ 4
+#define FRONT_PANEL_KEY_REPEAT_TICKS (TIMER3_INTERRUPTS_PER_SECOND / FRONT_PANEL_KEY_REPEAT_RATE_IN_HZ)
+byte nTicksPerKeyRepeat;
 
 
 // USB buffers must be in USB RAM, hence the "absolute" specifier...
 byte BANK4_RESERVED_FOR_USB[256] absolute 0x400; // Prevent compiler from allocating
                                                  // RAM variables in Bank 4 because
                                                  // the USB hardware uses that bank.
-                                                 // Refer to the PIC18F2550 datasheet
-                                                 // section "5.3.1 USB RAM" for more
+                                                 // Refer to the PIC18F25K50 datasheet
+                                                 // section "6.4.1 USB RAM" for more
                                                  // information.
 byte sUSBResponse[1+1] absolute 0x500;  // Buffer for PIC <-- Host (ReportId + 1 byte)
 byte sUSBCommand[1+3]  absolute 0x508;  // Buffer for PIC --> Host (ReportId + 3 bytes)
@@ -1424,16 +1488,47 @@ void Prolog()
 {
   byte i;
 
-  OSCCON = 0b01110010;
+  ANSELA = 0b00000000;    // Configure all PORTA bits as digital
+  ANSELB = 0b00000000;    // Configure all PORTB bits as digital
+  ANSELC = 0b00000000;    // Configure all PORTC bits as digital
+
+  //        76543210
+  TRISA = 0b10111111;     // PORTA: All pins input except for RA6
+  TRISB = 0b11111111;     // PORTB: All pins input
+  TRISC = 0b00111000;     // PORTC: Only RC3, RC4 and RC5 pins are input
+
+  LATA = 0;
+  LATB = 0;
+  LATC = 0;
+
+  ACTIVITY_LED = ON;      // Show microcontroller is working (at 1 MHz for now)
+  OSCCON = 0b01110000;
 //           x              0  = IDLEN: Sleep on SLEEP instruction
 //            xxx           111= IRCF: HFINTOSC (16 MHz)
 //               x          0  = OSTS: Status bit
 //                x         0  = HFIOFS: Status bit
-//                 xx       1x = SCS: Internal oscillator block
-  ACTEN_bit = 0;          // Active Clock Tuning disabled
-  ACTSRC_bit = 1;         // Tune HFINTOSC to match USB host clock
-  ACTEN_bit = 1;          // Active Clock Tuning enabled
+//                 xx       00 = SCS: Primary clock (determined by FOSC in CONFIG1H)
+  while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
+  while (!OSTS_bit);      // Wait until FOSC<3:0> is being used
 
+// You can enable the PLL and set the PLL multipler two ways:
+// 1. At compile time - setting configuration fuses: CFGPLLEN and PLLSEL
+//    ...but only if you use an External Clock (EC).
+// 2. At run time - setting OSCCON2.PLLEN and OSCTUNE.SPLLMULT
+//    ...but only if you use a High Speed crystal (HS), or
+//       the High Frequency Internal Oscillator (HFINTOSC).
+// This project uses the HFINTOSC set to run at 16 MHz and the only valid 
+// PLL multiplier for USB is x3.
+  PLLEN_bit = 0;          // OSCCON2.PLLEN = 0:    Disable the PLL, then...
+  SPLLMULT_bit = 1;       // OSCTUNE.SPLLMULT = 1: Set the PLL multiplier to x3
+  PLLEN_bit = 1;          // OSCCON2.PLLEN = 1:    Now re-enable the PLL
+  while(!PLLRDY_bit);     // Wait for PLL to lock
+  
+  ACTEN_bit = 0;          // Disable Active Clock Tuning, then...
+  ACTSRC_bit = 1;         // Tune HFINTOSC to match USB host clock
+  ACTEN_bit = 1;          // Enable Active Clock Tuning
+//  while (!ACTLOCK_bit);   // Wait until HFINTOSC is successfully tuned
+  
   cFlags = 0;             // Reset all flags
   for (i=0; i < sizeof irCommand.b; i++) irCommand.b[i] = 0;
   usbCommand.uxyy = 0;
@@ -1445,56 +1540,48 @@ void Prolog()
                           // 0 = USB Full Speed disabled (requires 6 MHz USB clock)
                           //     IRK will work in Low Speed only
 
-// Set up the Timer0 module to timeout the LCD backlight...
+// Timer0 is used for LCD display backlight timeouts
   T0CON   = 0b00000111;
-//            x              0  = Timer0 off
-//             x             0  = Timer0 is in 16-bit mode
-//              x            0  = Timer0 clock source is FOSC/4
-//               x           0  = Timer0 source edge select (ignored)
-//                x          0  = Timer0 prescaler assigned
-//                 xxx       111= Timer0 prescaler (1:256)
-// Timer0 tick rate = 24 MHz clock/4/256 = 23437.5 Hz
-// ...so we can set a 1 second delay by storing 65535-23437=42098 in TMR0H:TMR0L
+//            x              0   = TNR0ON: Timer0 off
+//             x             0   = T08BIT: Timer0 is in 16-bit mode
+//              x            0   = T0CS:   Timer0 clock source is FOSC/4
+//               x           0   = T0SE:   Timer0 source edge select (ignored)
+//                x          0   = PSA:    Timer0 prescaler assigned
+//                 xxx       111 = TOPS:   Timer0 prescaler (1:256)
+// Timer0 tick rate at 24 MHz MCU clock = 24 MHz clock/4/256 = 23437.5 Hz
+//       We can set a 1 second delay by storing 65535-23437=42098 in TMR0H:TMR0L
+// Timer0 tick rate at 48 MHz MCU clock = 48 MHz clock/4/256 = 46875 Hz
+//       We can set a 1 second delay by storing 65535-46875=18661 in TMR0H:TMR0L
 
+// Timer1 is used for IR signal capture timings
+  T1CON   = 0b00110010;
+//            xx             00 = TMR1CS: Timer1 clock source is instruction clock (Fosc/4)
+//              xx           11 = TMR1PS: Timer1 prescale value is 1:8
+//                x          0  = SOSCEN: Secondary Oscillator disabled
+//                 x         0  = T1SYNC: Ignored because TMR1CS = 0x
+//                  x        1  = RD16:   Enables register read/write of Timer1 in one 16-bit operation
+//                   x       0  = TMR1ON: Timer1 is off
 
-// Use this Timer1 config for low-speed USB...
-  T1CON   = 0b10110001;
-//            x              1  = Timer1 16bit R/W mode enabled
-//             x             0  = Device clock is not from Timer1
-//              xx           11 = 1:8 Prescale
-//                x          0  = Timer1 oscillator is shut off
-//                 x         0  = Timer1 sync (ignored)
-//                  x        0  = Timer1 clock source is internal (Fosc/4)
-//                   x       1  = Timer1 is enabled
-// Timer1 tick rate = 24 MHz clock/4/8 = 0.75 MHz
+// Timer1 tick rate = 24 MHz clock/4/8 = 0.75 MHz (when FOSC is 24 Mhz)
+//                    48 MHz clock/4/8 = 1.50 MHz (when FOSC is 48 Mhz)
 
-// Timer3 is to be used for "type-o-matic" button repeats...
-  T3CON   = 0b10110000;
-//            x              1  = Timer3 16bit R/W mode enabled
-//             x  x          00 = Timer1 is capture/compare source for both CCP modules
-//              xx           11 = 1:8 Prescale
-//                 x         0  = Timer3 sync (ignored)
-//                  x        1  = Timer3 clock source is internal (Fosc/4)
-//                   x       0  = Timer3 is off
-// Timer3 tick rate = 8 MHz crystal/4/8 = 250 KHz
+// Timer2 is used for IR signal transmission (PWM)
+// ...via library calls, so it is not configured here
+
+// Timer3 is used for key repeats
+  T3CON   = 0b00110010;
+//            xx             00 = TMR3CS: Timer3 clock source is instruction clock (Fosc/4)
+//              xx           11 = TMR3PS: Timer3 prescale value is 1:8
+//                x          0  = SOSCEN: Secondary Oscillator disabled
+//                 x         0  = T3SYNC: Ignored because TMR3CS = 0x
+//                  x        1  = RD16:   Enables register read/write of Timer3 in one 16-bit operation
+//                   x       0  = TMR3ON: Timer3 is off
 
   INTCON.GIE = 1;         // Enable global interrupts
   INTCON.PEIE = 1;        // Enable peripheral interrupts
 
   INTCON2.NOT_RBPU = 0;   // Enable PORTB weak pull-ups (PIC 18F2550)
 
-  ANSELA = 0b00000000;    // Configure all PORTA bits as digital
-  ANSELB = 0b00000000;    // Configure all PORTB bits as digital
-  ANSELC = 0b00000000;    // Configure all PORTC bits as digital
-
-  //        76543210
-  TRISA = 0b10111111;
-  TRISB = 0b11111111;
-  TRISC = 0b00111000;
-
-  LATA = 0;
-  LATB = 0;
-  LATC = 0;
 
 //----------------------------------------------------------------------------
 // Set up Pulse Width Modulation (to transmit IR output signals)
@@ -1520,7 +1607,7 @@ void Prolog()
     while (((PORTB & 0b11110111) ^ 0b11110111));
   }
 
-  PIE2.TMR3IE = 1;        // Enable Timer3 interrupts
+  PIE2.TMR3IE = 1;        // Enable key repeat timer interrupts
 
 //----------------------------------------------------------------------------
 // Retrieve this device's configuration from EEPROM
@@ -1625,25 +1712,30 @@ void processInfraredInterrupt(void)
 
 void interrupt()            // High priority interrupt service routine
 {
-  USB_Interrupt_Proc();
+  USB_Interrupt_Proc();     // Always give the USB module first opportunity to process
+  // The next most important interrupt is from the Infrared receiver...
   if (PIR2.CCP2IF)          // If capture event (rise/fall) on the CCP2 pin
   {
     nPulseWidth.byte[1] = CCPR2H; // Remember the elapsed time since last event
     nPulseWidth.byte[0] = CCPR2L;
     nRiseOrFall = CCP2CON;  // Save the rise or fall detection mode
-    CCP2CON ^= 0b00000001;  // Toggle rise or fall detection
+    CCP2M0_bit ^= 1;        // Toggle rise or fall detection
     TMR1H = 0;              // Set high-byte of 16-bit time
     TMR1L = 0;              // Set low-byte and write all 16 bits to Timer1
     bInfraredInterruptPending = 1; // Indicate capture event detected
     PIR2.CCP2IF = 0;        // Allow the next CCP2 interrupt to occur
   }
-  else if (PIR2.TMR3IF)          // If it's a Timer3 interrupt
-  {
-    bTypomaticPending = TRUE;  // Indicate Timer3 rollover (3.81 times/second)
-    nTypomaticDelay--;      // Decrement delay before typomatic action starts
+  // Technically any or all of these interrupts can be asserted simultaneously,
+  // but to ensure quick exit from the interrupt handler we only process
+  // the most important (and let interrupt() be driven again for the others).
+  // That is why "else if" is used.
+  else if (PIR2.TMR3IF)     // If it's a Timer3 interrupt
+  {                         // 22.89 ticks/sec @48 MHz, 11.44 ticks/sec @24 MHz
+    bKeyRepeatPending = TRUE;  // Indicate Timer3 rollover
+    nKeyRepeatDelay--;      // Decrement delay before key repeat action starts
     PIR2.TMR3IF = 0;        // Clear the Timer3 interrupt flag
   }
-  else if (INTCON.TMR0IF)        // If backlight timeout interrupt
+  else if (INTCON.TMR0IF)   // If backlight timeout interrupt
   {
     nBacklightDelay--;      // Decrement seconds remaining with backlight on
     if (nBacklightDelay == 0)
@@ -1709,12 +1801,12 @@ void handleOKButton(void)
   {
     executeCommand();
     while (OK_BUTTON_PRESSED)
-    { // Note: typomatic repeat is normally a USB host function but IRK! is different
-      if (bTypomaticPending && nTypomaticDelay <= 0)
+    { // Note: key repeat is normally a USB host function but IRK! is different
+      if (bKeyRepeatPending && nKeyRepeatDelay <= 0)
       {
         executeCommand();
-        bTypomaticPending = FALSE;
-        nTypomaticDelay = 0;
+        bKeyRepeatPending = FALSE;
+        nKeyRepeatDelay = 0;
       }
     }
   }
@@ -1743,12 +1835,12 @@ void adjustValueBy(signed short nDelta, void (*adjustValue)(signed short), byte 
   updateLCD();
   while (isButtonPressed())
   {
-    if (bTypomaticPending && nTypomaticDelay <= 0)
+    if (bKeyRepeatPending && nKeyRepeatDelay <= 0)
     {
       adjustValue(nDelta);
       updateLCD();
-      bTypomaticPending = FALSE;
-      nTypomaticDelay = 0;
+      bKeyRepeatPending = FALSE;
+      nKeyRepeatDelay = 0;
     }
   }
 }
@@ -1762,12 +1854,12 @@ void adjustValueOfCommand(signed short nDelta, byte (*isButtonPressed)())
 {
   adjustCommandBy(nDelta);
   updateLCD();
-  nTypomaticSlowCount = SLOW_REPEAT_RATE_FACTOR;
+  nTicksPerKeyRepeat = FRONT_PANEL_KEY_REPEAT_TICKS;
   while (isButtonPressed())
   {
-    if (bTypomaticPending && nTypomaticDelay <= 0)
+    if (bKeyRepeatPending && nKeyRepeatDelay <= 0)
     {
-      if (--nTypomaticSlowCount == 0)
+      if (--nTicksPerKeyRepeat == 0)
       {
         adjustCommandBy(nDelta);
         while ((*getDesc() == 0) // Skip over keys with no description...
@@ -1776,10 +1868,10 @@ void adjustValueOfCommand(signed short nDelta, byte (*isButtonPressed)())
           adjustCommandBy(nDelta);
         }
         updateLCD();
-        nTypomaticSlowCount = SLOW_REPEAT_RATE_FACTOR;
+        nTicksPerKeyRepeat = FRONT_PANEL_KEY_REPEAT_TICKS;
       }
-      bTypomaticPending = FALSE;
-      nTypomaticDelay = 0;
+      bKeyRepeatPending = FALSE;
+      nKeyRepeatDelay = 0;
     }
   }
 }
@@ -1801,7 +1893,7 @@ void handleShiftButton(void)
   usbCommand.s.ux.bits.LeftShift ^= 1;     // Toggle the SHIFT key modifier
   while (SHIFT_BUTTON_PRESSED)
   {
-    if (bTypomaticPending && nTypomaticDelay <= 0)
+    if (bKeyRepeatPending && nKeyRepeatDelay <= 0)
     {
       if (!bSettingUsage) // Do this only when beginning to set usage
       {
@@ -1809,8 +1901,8 @@ void handleShiftButton(void)
         bSettingUsage = TRUE;
         updateLCD();
       }
-      bTypomaticPending = FALSE;
-      nTypomaticDelay = 0;
+      bKeyRepeatPending = FALSE;
+      nKeyRepeatDelay = 0;
     }
   }
   updateLCD();
@@ -1821,14 +1913,14 @@ void handleCtlButton(void)
   usbCommand.s.ux.bits.LeftControl ^= 1;   // Toggle the CTL key modifier
   while (CTL_BUTTON_PRESSED)
   {
-    if (bTypomaticPending && nTypomaticDelay <= 0)
+    if (bKeyRepeatPending && nKeyRepeatDelay <= 0)
     {
       usbCommand.s.ux.bits.LeftControl ^= 1;   // Revert the CTL key modifier
       usbCommand.s.ux.bits.LeftGUI ^= 1;   // Toggle the GUI key modifier
       updateLCD();
       while (CTL_BUTTON_PRESSED); // Make it a one-shot change
-      bTypomaticPending = FALSE;
-      nTypomaticDelay = 0;
+      bKeyRepeatPending = FALSE;
+      nKeyRepeatDelay = 0;
     }
   }
   updateLCD();
@@ -1866,10 +1958,10 @@ void main()
     {
       enableBacklight();          // Conditionally turn on LCD backlight
       Delay_ms(25);               // Debounce delay
-      nTypomaticDelay = 3;        // Number of typomatic interrupts before repeating
+      nKeyRepeatDelay = KEY_REPEAT_DELAY_IN_TICKS;  // Number of Timer3 interrupts before starting key repeat
       TMR3L = 0;                  // Clear the Timer3 counter
       TMR3H = 0;
-      T3CON.TMR3ON = ON;          // Turn on the "type-o-matic" repeat timer
+      T3CON.TMR3ON = ON;          // Turn on the key repeat timer
       if (!bSettingUsage && !bSettingDeviceAddress && !bSettingBacklightDelay)
       {
         if (TEACH_BUTTON_PRESSED)   // Transmit the current key via infrared
@@ -1888,8 +1980,8 @@ void main()
       if (OK_BUTTON_PRESSED)    handleOKButton();
       if (UP_BUTTON_PRESSED)    adjustBy(+1, &isUpButtonPressed);
       if (DOWN_BUTTON_PRESSED)  adjustBy(-1, &isDownButtonPressed);
-      T3CON.TMR3ON = OFF;         // Turn off the "type-o-matic" repeat timer
-      bTypomaticPending = FALSE;
+      T3CON.TMR3ON = OFF;         // Turn off the key repeat timer
+      bKeyRepeatPending = FALSE;
       updateLCD();         // Show final key state
     }
     if (bLastUSBPower ^ USB_POWER_GOOD) // If USB power state has changed

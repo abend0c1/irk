@@ -45,9 +45,9 @@ The front panel buttons comprise:
 - DOWN - Press to decrement the displayed function code. Press and hold to repeatedly decrement the function code.
 - OK - Press to accept an entry, or to cause the selected function to be executed.
 - TEACH - Press to transmit a code representing the currently selected function to your IR remote control so that it can "learn" it.
-- CTL - Press to toggle the keyboard "Ctrl" key
+- CTL - Press to toggle the keyboard "Ctrl" key. Press *and hold* to toggle the keyboard "GUI" key. The "GUI" key is a generic name for the "Windows" key on Microsoft keyboards, the "Apple" key on Apple keyboard, or the "Meta" or "Super" key on other keyboards. 
 - ALT - Press to toggle the keyboard "Alt" key 
-- SHIFT - Press to toggle the keyboard "Shift" key. Press and hold to toggle the keyboard "GUI" key. The "GUI" key is a generic name for the "Windows" key on Microsoft keyboards, the "Apple" key on Apple keyboard, or the "Meta" or "Super" key on other keyboards.
+- SHIFT - Press to toggle the keyboard "Shift" key. Press *and hold* to select a different "usage page" (currently you can choose from Keyboard, Consumer Device, System Control, and local IRK! functions); then press UP/DOWN and OK to select the "usage page".
 
 
 Front Panel Display 
