@@ -478,6 +478,10 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 #define IR_MODULATION_FREQ  38000
 #define DUTY_CYCLE 256 / 2                      // 1 on to 2 off
 
+// LCD characters loaded into CGRAM:
+#define UP_ARROW     0x01
+#define DOWN_ARROW   0x02
+
 // define some easy to remember types
 typedef unsigned short  byte;
 
@@ -615,21 +619,17 @@ byte nNewBacklightDelay;
 // rate of 0.75 MHz, not 1 MHz, so we have to scale the above units
 // by 3/4 to give microsecond units (3 Timer1 ticks is 4 microseconds)...
 // #define MICROSECONDS 3 / 4
-// ...which is the same as 6 / 8
 
 // If the MCU clock is running at 48 MHz it feeds Timer1 with 48/4 = 12 MHz
 // pulses that are prescaled by a factor of 1:8, giving a Timer1 tick
 // rate of 1.5 MHz, not 1 MHz, so we have to scale the above units
 // by 3/2 to give microsecond units (3 Timer1 ticks is 2 microseconds)...
 // #define MICROSECONDS 3 / 2
-// ...which is the same as 12 / 8
 
 // Letting the compiler work it out for us, we have...
 #define TIMER1_PRESCALER      8
 #define TIMER1_RATE (CLOCK_FREQUENCY/4/TIMER1_PRESCALER)
-#define NUMERATOR (TIMER1_RATE * 8 / 1000000)
-#define MICROSECONDS (NUMERATOR / 8)
-
+#define MICROSECONDS(x) (x * TIMER1_RATE / 1000000)
 
 #define TIMER3_PRESCALER      8
 #define TIMER3_RATE (CLOCK_FREQUENCY/4/TIMER3_PRESCALER)
@@ -638,7 +638,7 @@ byte nNewBacklightDelay;
 #define KEY_REPEAT_DELAY_IN_TICKS (KEY_REPEAT_DELAY_IN_SECONDS * TIMER3_INTERRUPTS_PER_SECOND)
 volatile signed short nKeyRepeatDelay; // Number of Timer3 ticks before key repeat starts
 
-#define FRONT_PANEL_KEY_REPEAT_RATE_IN_HZ 4
+#define FRONT_PANEL_KEY_REPEAT_RATE_IN_HZ 4.0
 #define FRONT_PANEL_KEY_REPEAT_TICKS (TIMER3_INTERRUPTS_PER_SECOND / FRONT_PANEL_KEY_REPEAT_RATE_IN_HZ)
 byte nTicksPerKeyRepeat;
 
@@ -712,14 +712,14 @@ void actionBacklightDelay ()
   {
    case 0x00:                  // Backlight always OFF
      LCD_BACKLIGHT = 1;        // Set LCD backlight off (0=On, 1=Off)
-     T0CON.TMR0ON = 0;         // Disable the backlight timer
+     TMR0ON_bit = 0;           // Disable the backlight timer
      break;
    case 0xFF:                  // Backlight always ON
      LCD_BACKLIGHT = 0;        // Set LCD backlight on (0=On, 1=Off)
-     T0CON.TMR0ON = 0;         // Disable the backlight timer
+     TMR0ON_bit = 0;           // Disable the backlight timer
      break;
    default:                    // Backlight off after nn seconds
-     T0CON.TMR0ON = 1;         // Enable the backlight timer
+     TMR0ON_bit = 1;           // Enable the backlight timer
      break;
   }
 }
@@ -1045,9 +1045,9 @@ void enableBacklight()
   nBacklightDelay = nConfigBacklightDelay;  // Keep backlight on for this many seconds
   TMR0H = HiByte(ONE_SECOND);  // Set high-byte of 16-bit count
   TMR0L = LoByte(ONE_SECOND);  // Set low-byte and write all 16 bits to Timer0
-  INTCON.TMR0IF = 0;           // Clear the Timer0 interrupt flag
-  INTCON.TMR0IE = 1;           // Enable Timer0 interrupts
-  T0CON.TMR0ON = 1;            // Turn on Timer0
+  TMR0IF_bit = 0;              // Clear the Timer0 interrupt flag
+  TMR0IE_bit = 1;              // Enable Timer0 interrupts
+  TMR0ON_bit = 1;              // Turn on Timer0
 }
 
 void showDebugInfo()
@@ -1058,9 +1058,9 @@ void showDebugInfo()
   //        <---16 chars--->
   //       +0000000000111111
   //       +0123456789012345
-  // Line1: bbbbbbbbbbbb
-  //        bbbbbbbbbbbb      Last 6-byte IR command received
-  //                    nnnn   Number of resets before a good command was received
+  // Line1: bbbbbbbbbbbbnnnn
+  //        bbbbbbbbbbbb       = Last 6-byte IR command received
+  //                    nnnn   = Number of resets before a good command was received
   for (i = 0; i < 6; i++)
   {
     c2x(irCommand.b[i], &sLCDLine1[i*2]);
@@ -1073,12 +1073,12 @@ void showDebugInfo()
   //       +0000000000111111
   //       +0123456789012345
   // Line2: yy ss n.n wwww r
-  //        yy                   Last valid USB usage code (xyy)
-  //           ss                Last IR processing state number (00=Reset)
-  //              n.n            Number of bytes.bits received (6.0 is normal)
-  //                  wwww       Last pulse width
-  //                       0     Last pulse was a falling edge
-  //                       1     Last pulse was a rising edge
+  //        yy                 = Last valid USB usage code (xyy)
+  //           ss              = Last IR processing state number (00=Reset)
+  //              n.n          = Number of bytes.bits received (6.0 is normal)
+  //                  wwww     = Last pulse width
+  //                       v   = Last pulse was a falling edge (DOWN_ARROW)
+  //                       ^   = Last pulse was a rising edge  (UP_ARROW)
   c2x(usbCommand.s.yy, &sLCDLine2);
   sLCDLine2[2] = ' ';
   c2x(nState, &sLCDLine2[3]);
@@ -1091,9 +1091,9 @@ void showDebugInfo()
   c2x(nPulseWidth.byte[0], &sLCDLine2[12]);
   sLCDLine2[14] = ' ';
   if (bRisingEdge)
-     sLCDLine2[15] = 'u';
+     sLCDLine2[15] = UP_ARROW;
   else
-     sLCDLine2[15] = 'd';
+     sLCDLine2[15] = DOWN_ARROW;
   sLCDLine2[16] = 0;
   resetCount.n = 0;
   Lcd_Cmd(_LCD_CLEAR);                // Clear display
@@ -1346,18 +1346,19 @@ void gotoResetState()
 
 void disableInfraredCapture()
 {
-  PIE2.CCP2IE = 0;          // Disable CCP2 interrupts
+  CCP2IE_bit = 0;           // Disable CCP2 interrupts
 }
 
 void enableInfraredCapture()
 {
-  PIE2.CCP2IE = 0;          // Disable CCP2 interrupts while resetting capture mode
-  PIR2.CCP2IF = 0;          // Reset CCP2 interrupt flag
-  CCP2CON = 0b00000100;     // Capture every falling edge
+  CCP2IE_bit = 0;           // Disable CCP2 interrupts while resetting capture mode
+  CCP2IF_bit = 0;           // Reset CCP2 interrupt flag
+  CCP2CON = 0b00000000;     // Reset the CCP2 module
+  CCP2CON = 0b00000100;     // Set CCP2 to capture the next falling edge
   TMR1H = 0;                // Prime Timer1 high byte
   TMR1L = 0;                // Set Timer1 low and high bytes now
   gotoResetState();
-  PIE2.CCP2IE = 1;          // Enable CCP2 interrupts
+  CCP2IE_bit = 1;           // Enable CCP2 interrupts
 }
 
 void transmitInfraredShortMark()
@@ -1412,75 +1413,75 @@ void defineCustomCharacters()
   // null characters in the buffers to be written to the LCD. That's ok but
   // it makes null-terminated string handling more difficult.
 
-  // Note that the Character Generator RAM expects symbols to be defined as
-  // 8 rows of 8 bits, but the LCD display cell size is only 8 rows of 5 bit
+  // Note that the Character Generator RAM (CGRAM) expects symbols to be defined
+  // as 8 rows of 8 bits, but the LCD display cell size is only 8 rows of 5 bit
   // (i.e. a 7 x 5 character cell, plus one row for an underscore).
   // Consequently, the first three bits of each row are set to 0.
   
   Lcd_Cmd(72);      // Set CGRAM address to symbol #1 (symbol #0 is at 64)
   // 01 = Up Arrow
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00001010); // 10
-  Lcd_Chr_CP(0b00010101); // 21
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00001010);
+  Lcd_Chr_CP(0b00010101);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
   // 02 = Down Arrow
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00010101); // 21
-  Lcd_Chr_CP(0b00001010); // 10
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00010101);
+  Lcd_Chr_CP(0b00001010);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
   // 03 = Right Arrow
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000010); //  2
-  Lcd_Chr_CP(0b00011101); // 29
-  Lcd_Chr_CP(0b00000010); //  2
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000010);
+  Lcd_Chr_CP(0b00011101);
+  Lcd_Chr_CP(0b00000010);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
   // 04 = Left Arrow
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00001000); //  8
-  Lcd_Chr_CP(0b00010111); // 23
-  Lcd_Chr_CP(0b00001000); //  8
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00001000);
+  Lcd_Chr_CP(0b00010111);
+  Lcd_Chr_CP(0b00001000);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
   // 05 = Tilde
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00001001); //  9
-  Lcd_Chr_CP(0b00010101); // 21
-  Lcd_Chr_CP(0b00010010); // 18
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00001001);
+  Lcd_Chr_CP(0b00010101);
+  Lcd_Chr_CP(0b00010010);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
   // 06 = Pause
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00011011); // 27
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00011011);
+  Lcd_Chr_CP(0b00000000);
   // 07 = Back slash
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00010000); // 16
-  Lcd_Chr_CP(0b00001000); //  8
-  Lcd_Chr_CP(0b00000100); //  4
-  Lcd_Chr_CP(0b00000010); //  2
-  Lcd_Chr_CP(0b00000001); //  1
-  Lcd_Chr_CP(0b00000000); //  0
-  Lcd_Chr_CP(0b00000000); //  0
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00010000);
+  Lcd_Chr_CP(0b00001000);
+  Lcd_Chr_CP(0b00000100);
+  Lcd_Chr_CP(0b00000010);
+  Lcd_Chr_CP(0b00000001);
+  Lcd_Chr_CP(0b00000000);
+  Lcd_Chr_CP(0b00000000);
   Lcd_Cmd(_LCD_RETURN_HOME);
 }
 
@@ -1500,6 +1501,8 @@ void Prolog()
   LATA = 0;
   LATB = 0;
   LATC = 0;
+
+  NOT_RBPU_bit = 0;       // Enable PORTB weak pull-ups (PIC 18F25K50)
 
   ACTIVITY_LED = ON;      // Show microcontroller is working (at 1 MHz for now)
   OSCCON = 0b01110000;
@@ -1534,13 +1537,16 @@ void Prolog()
   usbCommand.uxyy = 0;
 
   // Set up USB
-  UCFG.UPUEN = 1;         // USB On-chip pull-up enable
-  UCFG.FSEN = 1;          // 1 = USB Full Speed enabled (requires 48 MHz USB clock)
+  UPUEN_bit = 1;          // USB On-chip pull-up enable
+  FSEN_bit = 1;           // 1 = USB Full Speed enabled (requires 48 MHz USB clock)
                           //     IRK will work in Full Speed or Low Speed
                           // 0 = USB Full Speed disabled (requires 6 MHz USB clock)
                           //     IRK will work in Low Speed only
 
-// Timer0 is used for LCD display backlight timeouts
+//----------------------------------------------------------------------------
+// Set up Timer0 for LCD display backlight timeouts
+//----------------------------------------------------------------------------
+
   T0CON   = 0b00000111;
 //            x              0   = TNR0ON: Timer0 off
 //             x             0   = T08BIT: Timer0 is in 16-bit mode
@@ -1548,27 +1554,37 @@ void Prolog()
 //               x           0   = T0SE:   Timer0 source edge select (ignored)
 //                x          0   = PSA:    Timer0 prescaler assigned
 //                 xxx       111 = TOPS:   Timer0 prescaler (1:256)
+
 // Timer0 tick rate at 24 MHz MCU clock = 24 MHz clock/4/256 = 23437.5 Hz
 //       We can set a 1 second delay by storing 65535-23437=42098 in TMR0H:TMR0L
 // Timer0 tick rate at 48 MHz MCU clock = 48 MHz clock/4/256 = 46875 Hz
 //       We can set a 1 second delay by storing 65535-46875=18661 in TMR0H:TMR0L
 
-// Timer1 is used for IR signal capture timings
-  T1CON   = 0b00110010;
+//----------------------------------------------------------------------------
+// Set up Timer1 for IR signal capture timings using CCP2 (permanently turned on)
+//----------------------------------------------------------------------------
+
+  T1CON   = 0b00110011;
 //            xx             00 = TMR1CS: Timer1 clock source is instruction clock (Fosc/4)
 //              xx           11 = TMR1PS: Timer1 prescale value is 1:8
 //                x          0  = SOSCEN: Secondary Oscillator disabled
 //                 x         0  = T1SYNC: Ignored because TMR1CS = 0x
 //                  x        1  = RD16:   Enables register read/write of Timer1 in one 16-bit operation
-//                   x       0  = TMR1ON: Timer1 is off
+//                   x       1  = TMR1ON: Timer1 is on
 
 // Timer1 tick rate = 24 MHz clock/4/8 = 0.75 MHz (when FOSC is 24 Mhz)
 //                    48 MHz clock/4/8 = 1.50 MHz (when FOSC is 48 Mhz)
 
-// Timer2 is used for IR signal transmission (PWM)
-// ...via library calls, so it is not configured here
+//----------------------------------------------------------------------------
+// Set up Timer2 for IR signal transmission (PWM)
+//----------------------------------------------------------------------------
 
-// Timer3 is used for key repeats
+// ...this is done via library calls, so it is not configured here
+
+//----------------------------------------------------------------------------
+// Set up Timer3 for key repeats (turned on when a front panel key is long-pressed)
+//----------------------------------------------------------------------------
+
   T3CON   = 0b00110010;
 //            xx             00 = TMR3CS: Timer3 clock source is instruction clock (Fosc/4)
 //              xx           11 = TMR3PS: Timer3 prescale value is 1:8
@@ -1577,11 +1593,12 @@ void Prolog()
 //                  x        1  = RD16:   Enables register read/write of Timer3 in one 16-bit operation
 //                   x       0  = TMR3ON: Timer3 is off
 
-  INTCON.GIE = 1;         // Enable global interrupts
-  INTCON.PEIE = 1;        // Enable peripheral interrupts
+//----------------------------------------------------------------------------
+// Let the interrupts begin
+//----------------------------------------------------------------------------
 
-  INTCON2.NOT_RBPU = 0;   // Enable PORTB weak pull-ups (PIC 18F2550)
-
+  PEIE_bit = 1;           // Enable peripheral interrupts
+  GIE_bit = 1;            // Enable global interrupts
 
 //----------------------------------------------------------------------------
 // Set up Pulse Width Modulation (to transmit IR output signals)
@@ -1607,7 +1624,7 @@ void Prolog()
     while (((PORTB & 0b11110111) ^ 0b11110111));
   }
 
-  PIE2.TMR3IE = 1;        // Enable key repeat timer interrupts
+  TMR3IE_bit = 1;         // Enable key repeat timer interrupts
 
 //----------------------------------------------------------------------------
 // Retrieve this device's configuration from EEPROM
@@ -1635,7 +1652,7 @@ void interpretInfraredCommand(void)
   if (bDebugMode)
     showDebugInfo();
   else
-    updateLCD();              // Display it on the LCD display
+    updateLCD();            // Display it on the LCD display
   executeCommand();         // Send it via USB to the host
 }
 
@@ -1654,8 +1671,9 @@ void appendBit(void)
   }
 }
 
-#define IS_PULSE_WIDTH_NEAR(x) (nPulseWidth.n > (((x) - WIDTH_ERROR_MARGIN) * MICROSECONDS) \
-                              & nPulseWidth.n < (((x) + WIDTH_ERROR_MARGIN) * MICROSECONDS))
+#define SMALLEST(x) MICROSECONDS(((x) - WIDTH_ERROR_MARGIN))
+#define LARGEST(x)  MICROSECONDS(((x) + WIDTH_ERROR_MARGIN))
+#define IS_PULSE_WIDTH_NEAR(x) ((nPulseWidth.n > SMALLEST(x))  &  (nPulseWidth.n < LARGEST(x)))
                               
 void processInfraredInterrupt(void)
 {
@@ -1663,42 +1681,58 @@ void processInfraredInterrupt(void)
   {
     case STATE_IR_RESET:
       if (bRisingEdge & IS_PULSE_WIDTH_NEAR(WIDTH_TRAINING_PULSE))
+      {
         nState = STATE_IR_TRAINING_RECEIVED;
+      }
       else
+      {
         gotoResetState();
+      }
       break;
     case STATE_IR_TRAINING_RECEIVED:
       if (bFallingEdge & IS_PULSE_WIDTH_NEAR(WIDTH_SILENCE_AFTER_TRAINING))
+      {
         nState = STATE_IR_RECEIVING_BITS;
+      }
       else
+      {
         gotoResetState();
+      }
       break;
     case STATE_IR_RECEIVING_BITS:
       if (bRisingEdge)  // All rising edges must be after a short burst
       {
-        if (nPulseWidth.n > ((WIDTH_SHORT + WIDTH_ERROR_MARGIN) * MICROSECONDS))
+        if (nPulseWidth.n > LARGEST(WIDTH_SHORT))
+        {
           gotoResetState();
+        }
+        else
+        {
+        }
       }
       else /* Falling edge (after either a short or long silence) */
       {
-        if (nPulseWidth.n > ((WIDTH_LONG + WIDTH_ERROR_MARGIN) * MICROSECONDS))
+        if (nPulseWidth.n > LARGEST(WIDTH_LONG))
         {
           gotoResetState();        // Too long, so it is not a 1 bit
         }
-        else if (nPulseWidth.n > ((WIDTH_LONG - WIDTH_ERROR_MARGIN) * MICROSECONDS))
+        else if (nPulseWidth.n > SMALLEST(WIDTH_LONG))
         {
           cByte <<= 1;             // Long enough for a 1 bit
           cByte |= 1;
           appendBit();             // Also goes to STATE_IR_COMMAND_RECEIVED
                                    // if enough bits have been received
         }
-        else if (nPulseWidth.n > ((WIDTH_SHORT - WIDTH_ERROR_MARGIN) * MICROSECONDS))
+        else if (nPulseWidth.n > SMALLEST(WIDTH_SHORT))
         {
           cByte <<= 1;             // Short enough for a 0 bit
           appendBit();             // Also goes to STATE_IR_COMMAND_RECEIVED
                                    // if enough bits have been received
         }
-        else gotoResetState();     // Too short, so it is not a 0 bit
+        else
+        {
+          gotoResetState();       // Too short, so it is not a 0 bit
+        }
       }
       break;
     case STATE_IR_COMMAND_RECEIVED:
@@ -1714,38 +1748,39 @@ void interrupt()            // High priority interrupt service routine
 {
   USB_Interrupt_Proc();     // Always give the USB module first opportunity to process
   // The next most important interrupt is from the Infrared receiver...
-  if (PIR2.CCP2IF)          // If capture event (rise/fall) on the CCP2 pin
+  if (CCP2IF_bit)           // If capture event (rise/fall) on the CCP2 pin
   {
     nPulseWidth.byte[1] = CCPR2H; // Remember the elapsed time since last event
     nPulseWidth.byte[0] = CCPR2L;
     nRiseOrFall = CCP2CON;  // Save the rise or fall detection mode
     CCP2M0_bit ^= 1;        // Toggle rise or fall detection
+//  LATA6_bit = CCP2M0_bit; // Debug CCP2 by putting a logic analyzer on RA6
     TMR1H = 0;              // Set high-byte of 16-bit time
     TMR1L = 0;              // Set low-byte and write all 16 bits to Timer1
     bInfraredInterruptPending = 1; // Indicate capture event detected
-    PIR2.CCP2IF = 0;        // Allow the next CCP2 interrupt to occur
+    CCP2IF_bit = 0;         // Allow the next CCP2 interrupt to occur
   }
   // Technically any or all of these interrupts can be asserted simultaneously,
   // but to ensure quick exit from the interrupt handler we only process
-  // the most important (and let interrupt() be driven again for the others).
-  // That is why "else if" is used.
-  else if (PIR2.TMR3IF)     // If it's a Timer3 interrupt
+  // the most important and let interrupt() be driven again for any interrupts
+  // that remain pending. That is why "else if" is used...
+  else if (TMR3IF_bit)      // If it's a Timer3 interrupt
   {                         // 22.89 ticks/sec @48 MHz, 11.44 ticks/sec @24 MHz
     bKeyRepeatPending = TRUE;  // Indicate Timer3 rollover
     nKeyRepeatDelay--;      // Decrement delay before key repeat action starts
-    PIR2.TMR3IF = 0;        // Clear the Timer3 interrupt flag
+    TMR3IF_bit = 0;         // Clear the Timer3 interrupt flag
   }
-  else if (INTCON.TMR0IF)   // If backlight timeout interrupt
+  else if (TMR0IF_bit)      // If backlight timeout interrupt
   {
     nBacklightDelay--;      // Decrement seconds remaining with backlight on
     if (nBacklightDelay == 0)
     {
       LCD_BACKLIGHT = 1;    // Turn backlight off (0=On, 1=Off)
-      T0CON.TMR0ON = 0;     // Turn off Timer0
+      TMR0ON_bit = 0;       // Turn off Timer0
     }
     TMR0H = HiByte(ONE_SECOND);  // Set high-byte of 16-bit count
     TMR0L = LoByte(ONE_SECOND);  // Set low-byte and write all 16 bits to Timer0
-    INTCON.TMR0IF = 0;      // Clear the Timer0 interrupt flag
+    TMR0IF_bit = 0;         // Clear the Timer0 interrupt flag
   }
 }
 
@@ -1959,30 +1994,30 @@ void main()
       enableBacklight();          // Conditionally turn on LCD backlight
       Delay_ms(25);               // Debounce delay
       nKeyRepeatDelay = KEY_REPEAT_DELAY_IN_TICKS;  // Number of Timer3 interrupts before starting key repeat
-      TMR3L = 0;                  // Clear the Timer3 counter
-      TMR3H = 0;
-      T3CON.TMR3ON = ON;          // Turn on the key repeat timer
+      TMR3H = 0;                  // Prime the Timer3 high byte
+      TMR3L = 0;                  // Now clear the Timer3 counter
+      TMR3ON_bit = ON;            // Turn on the key repeat timer
       if (!bSettingUsage && !bSettingDeviceAddress && !bSettingBacklightDelay)
       {
         if (TEACH_BUTTON_PRESSED)   // Transmit the current key via infrared
         {
           transmitInfraredCommand();
-          while (TEACH_BUTTON_PRESSED);   // Wait for button to be released
+          while (TEACH_BUTTON_PRESSED); // Wait for button to be released
         }
         if (CTL_BUTTON_PRESSED) handleCtlButton();
-        if (ALT_BUTTON_PRESSED)           // Toggle the ALT key modifier
+        if (ALT_BUTTON_PRESSED)         // Toggle the ALT key modifier
         {
           usbCommand.s.ux.bits.LeftAlt ^= 1;
-          while (ALT_BUTTON_PRESSED);     // Wait for button to be released
+          while (ALT_BUTTON_PRESSED);   // Wait for button to be released
         }
         if (SHIFT_BUTTON_PRESSED) handleShiftButton();
       }
       if (OK_BUTTON_PRESSED)    handleOKButton();
       if (UP_BUTTON_PRESSED)    adjustBy(+1, &isUpButtonPressed);
       if (DOWN_BUTTON_PRESSED)  adjustBy(-1, &isDownButtonPressed);
-      T3CON.TMR3ON = OFF;         // Turn off the key repeat timer
+      TMR3ON_bit = OFF;                 // Turn off the key repeat timer
       bKeyRepeatPending = FALSE;
-      updateLCD();         // Show final key state
+      updateLCD();                      // Show final key state
     }
     if (bLastUSBPower ^ USB_POWER_GOOD) // If USB power state has changed
     {
