@@ -379,6 +379,12 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20131228 3.02  AJA Improved code readability.
+           20131222 3.01  AJA Fixed description of what the front panel buttons
+                              do in README.md. Changed some configuration fuses 
+                              CONFIGxx) for PIC18F25K50. Reworked the timer value 
+                              calculations so that the MCU clock frequency can be
+                              reverted to 24 MHz more easily.
            20131126 3.00  AJA This version is for a PIC18F25K50 which has
                               an internal oscillator that can drive the USB
                               module - so no crystal is needed anymore.
@@ -452,7 +458,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "3.00"
+#define IRK_VERSION "3.02"
 
 #define OUTPUT        0
 #define INPUT         1
