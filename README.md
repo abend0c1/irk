@@ -163,23 +163,23 @@ The meanings id u, x and yy are as follows:
         - Displays debug information on the LCD when an IR code is received
     - F0 08   Debug off 
         - Returns the unit to Normal mode (displays no debug information on the LCD)
-    - F0 0A   Auxiliary Switch
+    - F0 09   Auxiliary Switch
         - The two header pins marked AUX will become low impedance for about
           250 ms.
-    - F0 11   Power Switch On
+    - F0 0A   Power Switch On
         - The two header pins marked PWR will become low impedance until a
           subsequent Power Switch Off command is received.
-    - F0 12   Reset Switch On
+    - F0 0B   Reset Switch On
         - The two header pins marked RST will become low impedance until a
           subsequent Power Switch Off command is received.
-    - F0 1A   Auxiliary Switch On
+    - F0 0C   Auxiliary Switch On
         - The two header pins marked AUX will become low impedance until a
           subsequent Power Switch Off command is received.
-    - F0 21   Power Switch Off
+    - F0 0D   Power Switch Off
         - The two header pins marked PWR will become high impedance.
-    - F0 22   Reset Switch Off
+    - F0 0E   Reset Switch Off
         - The two header pins marked RST will become high impedance.
-    - F0 2A   Auxiliary Switch Off
+    - F0 0F   Auxiliary Switch Off
         - The two header pins marked AUX will become high impedance.
 
 - Other values (u = 3 to F) are currently reserved for future use.

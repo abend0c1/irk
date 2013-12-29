@@ -603,13 +603,13 @@ byte nNewBacklightDelay;
 #define CMD_SET_BACKLIGHT_DELAY       0x06
 #define CMD_SET_DEBUG_ON              0x07
 #define CMD_SET_DEBUG_OFF             0x08
-#define CMD_PRESS_AUX_SWITCH          0x0A
-#define CMD_POWER_SWITCH_ON           0x11
-#define CMD_RESET_SWITCH_ON           0x12
-#define CMD_AUX_SWITCH_ON             0x1A
-#define CMD_POWER_SWITCH_OFF          0x21
-#define CMD_RESET_SWITCH_OFF          0x22
-#define CMD_AUX_SWITCH_OFF            0x2A
+#define CMD_PRESS_AUX_SWITCH          0x09
+#define CMD_POWER_SWITCH_ON           0x0A
+#define CMD_RESET_SWITCH_ON           0x0B
+#define CMD_AUX_SWITCH_ON             0x0C
+#define CMD_POWER_SWITCH_OFF          0x0D
+#define CMD_RESET_SWITCH_OFF          0x0E
+#define CMD_AUX_SWITCH_OFF            0x0F
 
 
 // Note that for a Vishay TSOP4838 IR receiver module, all IR bursts should
