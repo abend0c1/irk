@@ -136,10 +136,11 @@ The meanings id u, x and yy are as follows:
              press OK to select it. The default address is AA.
     - F0 01   Power Switch
         - The two header pins marked PWR will become low impedance for about
-          50 ms.
+          250 ms.  Note: this is not meant to switch large currents. The 4066
+          quad analog switch can pass an absolute maximum of only +/- 25 mA.
     - F0 02   Reset Switch
         - The two header pins marked RST will become low impedance for about
-          50 ms.
+          250 ms.
     - F0 03   Init USB
         - Causes the unit to re-register itself as a USB device. It is
           almost the equivalent of unplugging and replugging the device
@@ -164,7 +165,22 @@ The meanings id u, x and yy are as follows:
         - Returns the unit to Normal mode (displays no debug information on the LCD)
     - F0 0A   Auxiliary Switch
         - The two header pins marked AUX will become low impedance for about
-          50 ms.
+          250 ms.
+    - F0 11   Power Switch On
+        - The two header pins marked PWR will become low impedance until a
+          subsequent Power Switch Off command is received.
+    - F0 12   Reset Switch On
+        - The two header pins marked RST will become low impedance until a
+          subsequent Power Switch Off command is received.
+    - F0 1A   Auxiliary Switch On
+        - The two header pins marked AUX will become low impedance until a
+          subsequent Power Switch Off command is received.
+    - F0 21   Power Switch Off
+        - The two header pins marked PWR will become high impedance.
+    - F0 22   Reset Switch Off
+        - The two header pins marked RST will become high impedance.
+    - F0 2A   Auxiliary Switch Off
+        - The two header pins marked AUX will become high impedance.
 
 - Other values (u = 3 to F) are currently reserved for future use.
             
@@ -215,4 +231,3 @@ Examples
     its LED when it has recognised a valid IR code). Verify 
     that the "Mute" USB consumer device function has been performed
     at the host.
-      

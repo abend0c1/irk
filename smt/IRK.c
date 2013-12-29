@@ -203,8 +203,8 @@ OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
                     00 Set Address
                     You then press up/down to cycle the address (aa) then
                     press OK to select it. The default address is AA.
-            F0 01   Power Switch
-            F0 02   Reset Switch
+            F0 01   Power Switch (4066 analog switch number 1)
+            F0 02   Reset Switch (4066 analog switch number 2)
             F0 03   Init USB
             F0 04   Back light off
             F0 05   Back light on
@@ -216,6 +216,7 @@ OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
                     press OK to select it.
             F0 07   Debug on (displays debug info when an IR code is received)
             F0 08   Debug off (displays no debug info)
+            F0 0A   Auxiliary Switch (4066 analog switch number 3)
 
 
 
@@ -379,7 +380,13 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
-           20131228 3.02  AJA Improved code readability.
+           20131229 3.03  AJA Added local IRK! functions to turn on and off the
+                              4066 analog switches (PWR, RST and AUX). The
+                              existing code only asserted them for 250 ms.
+           20131228 3.02  AJA SMT version now works at 48 MHz. It will also work
+                              at 24 MHz but the mikroProg Suite software has a
+                              bug at the moment which prevents setting the
+                              configuration bits appropriately.
            20131222 3.01  AJA Fixed description of what the front panel buttons
                               do in README.md. Changed some configuration fuses 
                               CONFIGxx) for PIC18F25K50. Reworked the timer value 
@@ -458,7 +465,7 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 */
 #include "IRK.h"
 
-#define IRK_VERSION "3.02"
+#define IRK_VERSION "3.03"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -597,6 +604,12 @@ byte nNewBacklightDelay;
 #define CMD_SET_DEBUG_ON              0x07
 #define CMD_SET_DEBUG_OFF             0x08
 #define CMD_PRESS_AUX_SWITCH          0x0A
+#define CMD_POWER_SWITCH_ON           0x11
+#define CMD_RESET_SWITCH_ON           0x12
+#define CMD_AUX_SWITCH_ON             0x1A
+#define CMD_POWER_SWITCH_OFF          0x21
+#define CMD_RESET_SWITCH_OFF          0x22
+#define CMD_AUX_SWITCH_OFF            0x2A
 
 
 // Note that for a Vishay TSOP4838 IR receiver module, all IR bursts should
@@ -1029,6 +1042,12 @@ const char * getDesc () // Note: Literals returned as const are in ROM
         case CMD_SET_DEBUG_OFF:       return "Debug Off";
         case CMD_SET_DEBUG_ON:        return "Debug On";
         case CMD_PRESS_AUX_SWITCH:    return "Aux Switch";
+        case CMD_POWER_SWITCH_ON:     return "Power Sw On";
+        case CMD_RESET_SWITCH_ON:     return "Reset Sw On";
+        case CMD_AUX_SWITCH_ON:       return "Aux Sw On";
+        case CMD_POWER_SWITCH_OFF:    return "Power Sw Off";
+        case CMD_RESET_SWITCH_OFF:    return "Reset Sw Off";
+        case CMD_AUX_SWITCH_OFF:      return "Aux Sw Off";
         default: return "";
       }
     default: return "";
@@ -1281,17 +1300,29 @@ void performLocalIRKFunction()
     case CMD_PRESS_POWER_SWITCH:
       POWER_SWITCH = ON;
       Delay_ms(250);
+    case CMD_POWER_SWITCH_OFF:
       POWER_SWITCH = OFF;
       break;
     case CMD_PRESS_RESET_SWITCH:
       RESET_SWITCH = ON;
       Delay_ms(250);
+    case CMD_RESET_SWITCH_OFF:
       RESET_SWITCH = OFF;
       break;
     case CMD_PRESS_AUX_SWITCH:
       AUX_SWITCH = ON;
       Delay_ms(250);
+    case CMD_AUX_SWITCH_OFF:
       AUX_SWITCH = OFF;
+      break;
+    case CMD_POWER_SWITCH_ON:
+      POWER_SWITCH = ON;
+      break;
+    case CMD_RESET_SWITCH_ON:
+      RESET_SWITCH = ON;
+      break;
+    case CMD_AUX_SWITCH_ON:
+      AUX_SWITCH = ON;
       break;
     case CMD_INIT_USB:
       disableUSB();
