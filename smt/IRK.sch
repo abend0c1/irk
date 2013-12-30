@@ -13495,10 +13495,10 @@ Source: www.kingbright.com</description>
 <rectangle x1="22.25" y1="-5.05" x2="25.2" y2="-0.7" layer="48"/>
 <rectangle x1="25.9" y1="0.1" x2="28.85" y2="4.45" layer="48"/>
 <rectangle x1="25.9" y1="-5.05" x2="28.85" y2="-0.7" layer="48"/>
-<hole x="-37.5" y="-15.5" drill="2.5"/>
-<hole x="37.5" y="-15.5" drill="2.5"/>
-<hole x="-37.5" y="15.5" drill="2.5"/>
-<hole x="37.5" y="15.5" drill="2.5"/>
+<hole x="-37.5" y="-15.5" drill="2.99999375"/>
+<hole x="37.5" y="-15.5" drill="2.99999375"/>
+<hole x="-37.5" y="15.5" drill="2.99999375"/>
+<hole x="37.5" y="15.5" drill="2.99999375"/>
 </package>
 <package name="SOT23">
 <description>&lt;b&gt;SOT-23&lt;/b&gt;</description>
