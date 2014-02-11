@@ -198,26 +198,58 @@ OPERATION - The user is presented with an LCD 2 x 16 display that looks like:
             For the Local IRK! Functions usage:
             ux yy
             F      Local IRK! functions (i.e. not USB)
-            F0 00   Set Address ... the next LCD display will be:
-                    aa <-- Address
-                    00 Set Address
-                    You then press up/down to cycle the address (aa) then
-                    press OK to select it. The default address is AA.
-            F0 01   Power Switch (4066 analog switch number 1)
-            F0 02   Reset Switch (4066 analog switch number 2)
-            F0 03   Init USB
-            F0 04   Back light off
-            F0 05   Back light on
-            F0 06   Set light delay  ... the next LCD display will be:
-                    xx <-- nnn secs (where nnn is xx in decimal)
-                    FF <-- ON       (keep back light always on)
-                    00 <-- OFF      (keep back light always off)
-                    You then press up/down to cycle the delay (xx) then
-                    press OK to select it.
-            F0 07   Debug on (displays debug info when an IR code is received)
-            F0 08   Debug off (displays no debug info)
-            F0 0A   Auxiliary Switch (4066 analog switch number 3)
-
+            F0 00  Set Address ... the next LCD display will be:
+                   - aa <-- Address
+                   - 00 Set Address
+                   - You then press up/down to cycle the address (aa) then
+                     press OK to select it. The default address is AA.
+            F0 01  Power Switch
+                   - The two header pins marked PWR will become low impedance for about
+                     250 ms.  Note: this is not meant to switch large currents. The 4066
+                     quad analog switch can pass an absolute maximum of only +/- 25 mA.
+            F0 02  Reset Switch
+                   - The two header pins marked RST will become low impedance for about
+                     250 ms.
+            F0 03  Init USB
+                   - Causes the unit to re-register itself as a USB device. It is
+                     almost the equivalent of unplugging and replugging the device
+                     into a USB port.
+            F0 04  Back light off
+                   - Turns the LCD back light off
+            F0 05  Back light on
+                   - Turns the LCD back light off
+            F0 06  Set light delay  
+                   - Lets you set how many seconds you would like the LCD
+                     backlight to remain on after you have pressed a panel 
+                     button or issued a valid infrared command.
+                   - The next LCD display will be one of the following:
+                     - xx <-- nnn secs (where nnn is xx in decimal)
+                     - FF <-- ON       (keep back light always on)
+                     - 00 <-- OFF      (keep back light always off)
+                   - You then press up/down to choose the delay value (xx) then
+                     press OK to select it.
+            F0 07  Debug on 
+                   - Displays debug information on the LCD when an IR code is received
+            F0 08  Debug off 
+                   - Returns the unit to Normal mode (displays no debug information on the LCD)
+            F0 09  Auxiliary Switch (4066 analog switch number 3)
+                   - The two header pins marked AUX will become low impedance for about
+                     250 ms.
+            F0 0A  Power Switch On
+                   - The two header pins marked PWR will become low impedance until a
+                     subsequent Power Switch Off command is received.
+            F0 0B  Reset Switch On
+                   - The two header pins marked RST will become low impedance until a
+                     subsequent Power Switch Off command is received.
+            F0 0C  Auxiliary Switch On
+                   - The two header pins marked AUX will become low impedance until a
+                     subsequent Power Switch Off command is received.
+            F0 0D  Power Switch Off
+                   - The two header pins marked PWR will become high impedance.
+            F0 0E  Reset Switch Off
+                   - The two header pins marked RST will become high impedance.
+            F0 0F  Auxiliary Switch Off
+                   - The two header pins marked AUX will become high impedance.
 
 
 FORMATS -  1. The IR transmission format sent to, and received from, your
