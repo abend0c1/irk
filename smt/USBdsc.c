@@ -1,6 +1,6 @@
 /*
   IRK! Infrared Remote Controlled USB Keyboard $Rev:  $
-  Copyright (C) 2010-2013 Andrew J. Armstrong
+  Copyright (C) 2010-2014 Andrew J. Armstrong
 
   This file is part of IRK!.
 
@@ -34,16 +34,18 @@ const unsigned int USB_PRODUCT_ID = 0x214B;  // 'K!'
 const char USB_SELF_POWER = 0x80;            // 0x80 = Bus powered, 0xC0 = Self powered
 const char USB_MAX_POWER = 50;               // Bus power required in units of 2 mA
 const char USB_TRANSFER_TYPE = 0x03;         // 0x03 Interrupt
-const char EP_IN_INTERVAL = 10;              // Measured in frame counts (i.e. 1 ms units for Low Speed, 125 us units for High Speed)
-                                             // IRK! is a High Speed device (24 MHz MCU clock) operating as a Low Speed device (FSEN=0)
-                                             // 2**(10-1) x 125 microsecond units (for USB2 High Speed devices)
-                                             // = 64 ms intervals = 15.6 times/second 
+const char EP_IN_INTERVAL = 10;              // Measured in frame counts, that is:
+                                             //    1 ms units for USB1 Low Speed (1.5 Mbps) or Full Speed (12 Mbps)
+                                             //         using the formula: n x 1 ms units
+                                             //  125 μs units for USB2 High Speed (480 Mbps) 
+                                             //         using the formula: 2**(n-1) x 125 μs units
+                                             // The PIC 18F25K50 and 18F2550 do not support USB High Speed mode
+                                             // This device supports either Low Speed (FSEN=0, 6 MHz USB clock) or Full Speed (FSEN=1, 48 MHz USB clock) mode
                                              // The Host interrupts PIC for keyboard input this often.
                                              // IRK can handle about 10 IR commands per second, due to the time it takes
                                              // to transmit a single command, so this USB polling rate is adequate for IRK.
 
-const char EP_OUT_INTERVAL = 12;             // 2**(12-1) x 125 microsecond units (for USB2 High Speed devices)
-                                             // = 256 ms intervals = 3.9 times/second
+const char EP_OUT_INTERVAL = 12;             // Same units as EP_IN_INTERVAL above.
                                              // The Host interrupts PIC for LED status output at most this often (if LED status change is pending).
                                              // IRK does not use LED status reports, so this rate can be set quite low.
 
