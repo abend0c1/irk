@@ -412,6 +412,7 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20141002 3.04  AJA Use Hi() and Lo() built in functions.
            20131229 3.03  AJA Added local IRK! functions to turn on and off the
                               4066 analog switches (PWR, RST and AUX). The
                               existing code only asserted them for 250 ms.
@@ -496,8 +497,10 @@ HISTORY  - Date     Ver   By  Reason (most recent at the top please)
 -------------------------------------------------------------------------------
 */
 #include "IRK.h"
+#include "assign_pins.h"
+#include <built_in.h>
 
-#define IRK_VERSION "3.03"
+#define IRK_VERSION "3.04"
 
 #define OUTPUT        0
 #define INPUT         1
@@ -547,19 +550,12 @@ typedef union
 } t_keyModifiers;
 
 // LCD module
-sbit LCD_D4 at LATA0_bit;
-sbit LCD_D5 at LATA1_bit;
-sbit LCD_D6 at LATA2_bit;
-sbit LCD_D7 at LATA3_bit;
-sbit LCD_RS at LATA4_bit;
-sbit LCD_EN at LATA5_bit;
-
-sbit LCD_D4_Direction at TRISA0_bit;
-sbit LCD_D5_Direction at TRISA1_bit;
-sbit LCD_D6_Direction at TRISA2_bit;
-sbit LCD_D7_Direction at TRISA3_bit;
-sbit LCD_RS_Direction at TRISA4_bit;
-sbit LCD_EN_Direction at TRISA5_bit;
+ASSIGN(LCD_D4, A0)
+ASSIGN(LCD_D5, A1)
+ASSIGN(LCD_D6, A2)
+ASSIGN(LCD_D7, A3)
+ASSIGN(LCD_RS, A4)
+ASSIGN(LCD_EN, A5)
 
 // Buttons (weak pullups are enabled so they read high when not pressed)
 sbit TEACH_BUTTON            at RB0_bit;
@@ -589,11 +585,7 @@ sbit USB_POWER_GOOD          at RE3_bit;  // USB Power Good detection
 
 volatile signed short nBacklightDelay;    // Seconds to keep backlight on
 
-volatile union
-{
-  unsigned int n;
-  byte byte[2];
-} nPulseWidth;
+volatile unsigned int nPulseWidth;
 
 volatile byte nRiseOrFall;  // CCP2CON at time of capture interrupt
 #define bRisingEdge nRiseOrFall.B0    // Bit 0 in CCP2CON = 1 means rising edge detected
@@ -615,11 +607,7 @@ byte nState;
 #define STATE_IR_RECEIVING_BITS          2
 #define STATE_IR_COMMAND_RECEIVED        3
 
-union 
-{
-  int n;
-  byte b[2];
-} resetCount;
+unsigned int nResetCount;
 
 byte nConfigDeviceAddress;
 byte nConfigBacklightDelay;
@@ -1122,8 +1110,8 @@ void showDebugInfo()
   {
     c2x(irCommand.b[i], &sLCDLine1[i*2]);
   }
-  c2x(resetCount.b[1], &sLCDLine1[12]);
-  c2x(resetCount.b[0], &sLCDLine1[14]);
+  c2x(Hi(nResetCount), &sLCDLine1[12]);
+  c2x(Lo(nResetCount), &sLCDLine1[14]);
   sLCDLine1[16] = 0;
   // Debug Line 2:
   //        <---16 chars--->
@@ -1144,15 +1132,15 @@ void showDebugInfo()
   c2x(nBit,  &sLCDLine2[7]);
   sLCDLine2[7] = '.';
   sLCDLine2[9] = ' ';
-  c2x(nPulseWidth.byte[1], &sLCDLine2[10]);
-  c2x(nPulseWidth.byte[0], &sLCDLine2[12]);
+  c2x(Hi(nPulseWidth), &sLCDLine2[10]);
+  c2x(Lo(nPulseWidth), &sLCDLine2[12]);
   sLCDLine2[14] = ' ';
   if (bRisingEdge)
      sLCDLine2[15] = UP_ARROW;
   else
      sLCDLine2[15] = DOWN_ARROW;
   sLCDLine2[16] = 0;
-  resetCount.n = 0;
+  nResetCount = 0;
   Lcd_Cmd(_LCD_CLEAR);                // Clear display
   Lcd_Out(1,1,&sLCDLine1);
   Lcd_Out(2,1,&sLCDLine2);
@@ -1410,7 +1398,7 @@ void gotoResetState()
   nState = STATE_IR_RESET;
   nByte = 0;
   nBit = 0;
-  resetCount.n++;
+  nResetCount++;
 }
 
 void disableInfraredCapture()
@@ -1742,7 +1730,7 @@ void appendBit(void)
 
 #define SMALLEST(x) MICROSECONDS(((x) - WIDTH_ERROR_MARGIN))
 #define LARGEST(x)  MICROSECONDS(((x) + WIDTH_ERROR_MARGIN))
-#define IS_PULSE_WIDTH_NEAR(x) ((nPulseWidth.n > SMALLEST(x))  &  (nPulseWidth.n < LARGEST(x)))
+#define IS_PULSE_WIDTH_NEAR(x) ((nPulseWidth > SMALLEST(x))  &  (nPulseWidth < LARGEST(x)))
                               
 void processInfraredInterrupt(void)
 {
@@ -1771,7 +1759,7 @@ void processInfraredInterrupt(void)
     case STATE_IR_RECEIVING_BITS:
       if (bRisingEdge)  // All rising edges must be after a short burst
       {
-        if (nPulseWidth.n > LARGEST(WIDTH_SHORT))
+        if (nPulseWidth > LARGEST(WIDTH_SHORT))
         {
           gotoResetState();
         }
@@ -1781,18 +1769,18 @@ void processInfraredInterrupt(void)
       }
       else /* Falling edge (after either a short or long silence) */
       {
-        if (nPulseWidth.n > LARGEST(WIDTH_LONG))
+        if (nPulseWidth > LARGEST(WIDTH_LONG))
         {
           gotoResetState();        // Too long, so it is not a 1 bit
         }
-        else if (nPulseWidth.n > SMALLEST(WIDTH_LONG))
+        else if (nPulseWidth > SMALLEST(WIDTH_LONG))
         {
           cByte <<= 1;             // Long enough for a 1 bit
           cByte |= 1;
           appendBit();             // Also goes to STATE_IR_COMMAND_RECEIVED
                                    // if enough bits have been received
         }
-        else if (nPulseWidth.n > SMALLEST(WIDTH_SHORT))
+        else if (nPulseWidth > SMALLEST(WIDTH_SHORT))
         {
           cByte <<= 1;             // Short enough for a 0 bit
           appendBit();             // Also goes to STATE_IR_COMMAND_RECEIVED
@@ -1819,8 +1807,8 @@ void interrupt()            // High priority interrupt service routine
   // The next most important interrupt is from the Infrared receiver...
   if (CCP2IF_bit)           // If capture event (rise/fall) on the CCP2 pin
   {
-    nPulseWidth.byte[1] = CCPR2H; // Remember the elapsed time since last event
-    nPulseWidth.byte[0] = CCPR2L;
+    Hi(nPulseWidth) = CCPR2H; // Remember the elapsed time since last event
+    Lo(nPulseWidth) = CCPR2L;
     nRiseOrFall = CCP2CON;  // Save the rise or fall detection mode
     CCP2M0_bit ^= 1;        // Toggle rise or fall detection
 //  LATA6_bit = CCP2M0_bit; // Debug CCP2 by putting a logic analyzer on RA6
